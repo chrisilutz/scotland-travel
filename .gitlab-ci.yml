@@ -1,0 +1,12 @@
+# GitLab Pages: statische Dateien ohne Build-Step nach public/ kopieren.
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - mkdir -p public
+    - cp -r index.html agenda.html map.html sightseeing.html links.html css js public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

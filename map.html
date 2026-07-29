@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karte · Schottland 2026</title>
+  <meta name="description" content="Interaktive Karte der Schottland-Reise 2026 mit allen Stationen und der kompletten Zugroute.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏴󠁧󠁢󠁳󠁣󠁴󠁿</text></svg>">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="index.html">Schottland <span class="thistle">2026</span></a>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Start</a></li>
+        <li><a href="agenda.html">Agenda</a></li>
+        <li><a href="map.html" class="active">Karte</a></li>
+        <li><a href="sightseeing.html">Sightseeing</a></li>
+        <li><a href="links.html">Links</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <span class="kicker">Alle Stationen</span>
+      <h1>Reisekarte</h1>
+      <p>Die komplette Route von Würzburg bis in die Highlands und zurück —
+         Marker anklicken für Details zu jeder Station.</p>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container map-wrap">
+      <div id="map" aria-label="Interaktive Reisekarte"></div>
+      <div class="map-legend">
+        <span class="item"><span class="legend-line train"></span> Zug (ICE / ScotRail)</span>
+        <span class="item"><span class="legend-line sleeper"></span> Caledonian Sleeper</span>
+        <span class="item"><span class="legend-line eurostar"></span> Eurostar</span>
+        <span class="item"><span class="legend-line excursion"></span> Lokale Ausflüge</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">Schottland 2026</span>
+      <span>04.–14. September · Christian &amp; Vera</span>
+      <a href="links.html">Buchungsreferenzen</a>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="js/main.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
