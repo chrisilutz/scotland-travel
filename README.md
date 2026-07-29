@@ -20,14 +20,22 @@ Vanilla HTML/CSS/JS, kein Build-Step, keine Frameworks. Externe Abhängigkeiten:
 - **Leaflet 1.9.4** (CDN) mit OpenStreetMap-Tiles — kein API-Key nötig
 - **Google Fonts**: Playfair Display (Display) + Inter (Body)
 - **Komoot-Embed** für die Wanderung am South Loch Ness Trail
+- **Wikipedia-API** für die Fotos in den Sightseeing-Popups (CORS via
+  `origin=*`, kein Key). Ist sie nicht erreichbar, bleibt ein gestalteter
+  Platzhalter stehen — das Popup funktioniert vollständig ohne Bild.
 
 ```
 ├── index.html · agenda.html · map.html · sightseeing.html · links.html
 ├── css/style.css      Gesamtes Styling (dunkelgrün/slate, mobile-first)
 └── js/
-    ├── main.js        Mobile-Navigation + Countdown
-    └── map.js         Leaflet-Karte: Marker, Popups, Routen-Polylines
+    ├── main.js         Mobile-Navigation + Countdown
+    ├── map.js          Leaflet-Karte: Marker, Popups, Routen-Polylines
+    └── sightseeing.js  Inhalte & Detail-Popups der Sehenswürdigkeiten
 ```
+
+Die Inhalte der Sightseeing-Popups (Beschreibung, Eintritt, Öffnungszeiten,
+Links) stehen gesammelt im Objekt `SIGHTS` in `js/sightseeing.js` — dort
+werden sie gepflegt, das HTML bleibt unverändert.
 
 Die Karte unterscheidet die Verkehrsmittel farblich: Zug (blau), Caledonian Sleeper
 (dunkelblau), Eurostar (gelb), lokale Ausflüge (grün gestrichelt).
