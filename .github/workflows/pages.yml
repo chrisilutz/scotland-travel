@@ -1,0 +1,49 @@
+name: Deploy to GitHub Pages
+
+# Veröffentlicht die statische Website bei jedem Push auf main.
+# Voraussetzung: Repository → Settings → Pages → "Source: GitHub Actions".
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Rechte für das Deployment via OIDC-Token
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Parallele Deployments vermeiden, laufende aber nicht abbrechen
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Website zusammenstellen
+        # Kein Build-Step — nur die Seiten-Dateien einsammeln, damit README,
+        # Workflows und Deploy-Configs nicht mit veröffentlicht werden.
+        run: |
+          mkdir -p _site
+          cp index.html agenda.html map.html sightseeing.html links.html _site/
+          cp -r css js _site/
+
+      - name: Pages konfigurieren
+        uses: actions/configure-pages@v5
+
+      - name: Artefakt hochladen
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deployment
+        id: deployment
+        uses: actions/deploy-pages@v4

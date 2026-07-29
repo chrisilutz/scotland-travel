@@ -41,9 +41,20 @@ python3 -m http.server 8000
 
 ## Deployment
 
-Direkt deploybar, keine Vorbereitung nötig:
+### GitHub Pages (aktiv)
+
+Der Workflow `.github/workflows/pages.yml` veröffentlicht die Seite bei jedem
+Push auf **`main`**. Einmalig muss dafür im Repository unter
+**Settings → Pages** als *Source* **„GitHub Actions"** ausgewählt werden —
+danach läuft das Deployment automatisch.
+
+Die Seite liegt anschließend unter `https://<user>.github.io/scotland-travel/`.
+Alle Pfade im Projekt sind relativ, die Auslieferung aus einem Unterverzeichnis
+funktioniert also ohne weitere Anpassung. Clean URLs (`/agenda` statt
+`/agenda.html`) liefert GitHub Pages automatisch.
+
+### Alternativen
 
 - **Netlify** — `netlify.toml` liegt bei, Publish-Verzeichnis ist das Repo-Root.
-  Clean URLs (`/agenda` statt `/agenda.html`) funktionieren automatisch.
 - **GitLab Pages** — `.gitlab-ci.yml` kopiert die Dateien nach `public/`.
 - Jeder andere Static-Host: einfach alle Dateien hochladen.
