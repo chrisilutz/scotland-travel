@@ -34,7 +34,8 @@
       <span class="kicker">Sehenswürdigkeiten &amp; Aktivitäten</span>
       <h1>Sightseeing</h1>
       <p>Was uns an den einzelnen Stationen erwartet — von Klippenburgen an der
-         Nordsee bis zum Musical-Abend in London.</p>
+         Nordsee bis zum Musical-Abend in London. Ein Klick auf eine Karte öffnet
+         Details, Bild und weiterführende Links.</p>
     </div>
   </header>
 
@@ -48,30 +49,33 @@
           <p>Die Granite City an der Nordseeküste.</p>
         </div>
         <div class="grid">
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Altstadt</span>
-            <h3>Old Aberdeen &amp; Universität</h3>
-            <p>Kopfsteinpflaster, King's College und die Kathedrale St&nbsp;Machar —
-               das historische Herz der Stadt, gegründet im 15.&nbsp;Jahrhundert.</p>
+            <h3>Old Aberdeen &amp; King's College Chapel</h3>
+            <p>Kopfsteinpflaster und der gotische Crown Tower von 1509 — das
+               historische Herz der Stadt, gegründet im 15.&nbsp;Jahrhundert.</p>
+            <button type="button" class="card-more" data-sight="old-aberdeen">Mehr erfahren<span class="sr-only"> über Old Aberdeen und King's College Chapel</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Küste</span>
             <h3>Footdee („Fittie")</h3>
             <p>Ehemaliges Fischerdorf direkt an der Hafeneinfahrt: winzige Cottages,
                skurrile Gärten und Nordseeluft.</p>
+            <button type="button" class="card-more" data-sight="footdee">Mehr erfahren<span class="sr-only"> über Footdee („Fittie")</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Hafen</span>
             <h3>Aberdeen Harbour</h3>
             <p>Einer der ältesten Häfen Großbritanniens — mit etwas Glück
                lassen sich Delfine an der Hafeneinfahrt beobachten.</p>
+            <button type="button" class="card-more" data-sight="harbour">Mehr erfahren<span class="sr-only"> über Aberdeen Harbour</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Tagesausflug</span>
             <h3>Dunnottar Castle</h3>
             <p>Dramatische Klippenruine bei Stonehaven, erreichbar mit dem Bus&nbsp;X7
                und einem Küstenspaziergang.</p>
-            <a class="card-link" href="https://www.dunnottarcastle.co.uk" target="_blank" rel="noopener">dunnottarcastle.co.uk →</a>
+            <button type="button" class="card-more" data-sight="dunnottar">Mehr erfahren<span class="sr-only"> über Dunnottar Castle</span> →</button>
           </article>
         </div>
       </div>
@@ -85,24 +89,33 @@
           <p>Hauptstadt der Highlands und Basis für den großen Wandertag.</p>
         </div>
         <div class="grid">
-          <article class="card">
-            <span class="tag">Stadt</span>
-            <h3>River Ness &amp; Inverness Castle</h3>
-            <p>Uferspaziergang entlang des River Ness, hinauf zum Castle mit
-               Blick über Stadt und Fluss.</p>
+          <article class="card card-clickable">
+            <span class="tag">Neu 2026</span>
+            <h3>Inverness Castle Experience</h3>
+            <p>Im Februar 2026 nach 47&nbsp;Mio.&nbsp;£ Umbau wiedereröffnet:
+               Highland-Geschichte in zwei Türmen, dazu eine Dachterrasse.</p>
+            <button type="button" class="card-more" data-sight="inverness-castle">Mehr erfahren<span class="sr-only"> über die Inverness Castle Experience</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
+            <span class="tag">Stadt</span>
+            <h3>River Ness Walk</h3>
+            <p>Flacher 2-km-Uferweg zu den Ness Islands, vorbei an Kathedrale
+               und der schwingenden Greig Street Bridge.</p>
+            <button type="button" class="card-more" data-sight="river-ness">Mehr erfahren<span class="sr-only"> über den River Ness Walk</span> →</button>
+          </article>
+          <article class="card card-clickable">
             <span class="tag">Wanderung</span>
             <h3>South Loch Ness Trail</h3>
             <p>15,8&nbsp;km, 390&nbsp;Hm, schwierig: Moor, Nadelwald und die Foyers Bay —
                das stille Ufer von Loch&nbsp;Ness.</p>
-            <a class="card-link" href="https://www.komoot.com/tour/3091298275?share_token=afX9f9H9KsuinnRdtXRdiW5yBOV7ynvk35whkNdhzB718P6arz" target="_blank" rel="noopener">Tour auf Komoot →</a>
+            <button type="button" class="card-more" data-sight="loch-ness-trail">Mehr erfahren<span class="sr-only"> über South Loch Ness Trail</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Option</span>
             <h3>Kyle of Lochalsh</h3>
             <p>Mögliche Bahn-Tagestour ab Inverness: die Kyle Line gilt als eine
                der schönsten Strecken Großbritanniens.</p>
+            <button type="button" class="card-more" data-sight="kyle">Mehr erfahren<span class="sr-only"> über Kyle of Lochalsh</span> →</button>
           </article>
         </div>
       </div>
@@ -116,42 +129,47 @@
           <p>Kunst, Museen und ein Ausflug zur bedeutendsten Burg Schottlands.</p>
         </div>
         <div class="grid">
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Museum · kostenlos</span>
             <h3>Kelvingrove Art Gallery</h3>
             <p>Glasgows berühmtestes Museum: von Dalí bis zu schottischer
                Naturgeschichte, im prächtigen Sandsteinbau im West End.</p>
+            <button type="button" class="card-more" data-sight="kelvingrove">Mehr erfahren<span class="sr-only"> über Kelvingrove Art Gallery</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Museum</span>
             <h3>Riverside Museum</h3>
             <p>Verkehrsmuseum im spektakulären Zaha-Hadid-Bau am Clyde,
                mit dem Segelschiff Glenlee davor.</p>
+            <button type="button" class="card-more" data-sight="riverside">Mehr erfahren<span class="sr-only"> über Riverside Museum</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Viertel</span>
             <h3>West End &amp; Merchant City</h3>
             <p>Ashton Lane, Universität und Botanic Gardens im Westen —
                Cafés und viktorianische Fassaden rund ums Airbnb.</p>
+            <button type="button" class="card-more" data-sight="west-end">Mehr erfahren<span class="sr-only"> über West End & Merchant City</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Historie</span>
             <h3>Glasgow Cathedral &amp; Necropolis</h3>
             <p>Mittelalterliche Kathedrale und der viktorianische Hügelfriedhof
                dahinter — bester Blick über die Stadt.</p>
+            <button type="button" class="card-more" data-sight="cathedral">Mehr erfahren<span class="sr-only"> über Glasgow Cathedral & Necropolis</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Tagesausflug</span>
             <h3>Stirling Castle</h3>
             <p>Residenz der Stuarts über dem historischen Schlachtfeld-Land —
                35&nbsp;Minuten mit dem Zug ab Queen Street.</p>
-            <a class="card-link" href="https://www.stirlingcastle.scot" target="_blank" rel="noopener">stirlingcastle.scot →</a>
+            <button type="button" class="card-more" data-sight="stirling-castle">Mehr erfahren<span class="sr-only"> über Stirling Castle</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Tagesausflug</span>
             <h3>National Wallace Monument</h3>
             <p>Der Turm über Stirling erinnert an William Wallace — 246 Stufen,
                dafür Panorama bis zu den Highlands.</p>
+            <button type="button" class="card-more" data-sight="wallace">Mehr erfahren<span class="sr-only"> über National Wallace Monument</span> →</button>
           </article>
         </div>
       </div>
@@ -165,42 +183,62 @@
           <p>Großes Finale mit Camden, Themse-Ufer und Hamilton.</p>
         </div>
         <div class="grid">
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Highlight · 12.09. 19:30</span>
             <h3>Hamilton Musical</h3>
             <p>Victoria Palace Theatre, Victoria Street SW1E&nbsp;5EA ·
                2 Tickets · Ref. TFJ55FB.</p>
-            <a class="card-link" href="https://www.delfontmackintosh.co.uk" target="_blank" rel="noopener">delfontmackintosh.co.uk →</a>
+            <button type="button" class="card-more" data-sight="hamilton">Mehr erfahren<span class="sr-only"> über Hamilton Musical</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Viertel</span>
             <h3>Camden Market &amp; Regent's Canal</h3>
             <p>Street Food, Vintage-Stände und ein Kanalspaziergang Richtung
                Little Venice — direkt vor der Airbnb-Tür.</p>
+            <button type="button" class="card-more" data-sight="camden">Mehr erfahren<span class="sr-only"> über Camden Market & Regent's Canal</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Kultur</span>
             <h3>South Bank &amp; Tate Modern</h3>
             <p>Themse-Promenade vom London Eye bis zur Tate Modern im
                ehemaligen Kraftwerk (Eintritt frei).</p>
+            <button type="button" class="card-more" data-sight="south-bank">Mehr erfahren<span class="sr-only"> über South Bank & Tate Modern</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Kulinarik</span>
             <h3>Borough Market</h3>
             <p>Londons ältester Lebensmittelmarkt unter den Eisenbahnbögen
                an der London Bridge.</p>
+            <button type="button" class="card-more" data-sight="borough">Mehr erfahren<span class="sr-only"> über Borough Market</span> →</button>
           </article>
-          <article class="card">
+          <article class="card card-clickable">
             <span class="tag">Wahrzeichen</span>
             <h3>Tower Bridge</h3>
             <p>Zum Abschluss über die berühmteste Brücke der Stadt —
                mit Blick auf Tower und City.</p>
+            <button type="button" class="card-more" data-sight="tower-bridge">Mehr erfahren<span class="sr-only"> über Tower Bridge</span> →</button>
           </article>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- Detail-Popup -->
+  <dialog id="sight-modal" class="sight-modal" aria-labelledby="sight-modal-title">
+    <button type="button" class="modal-close" aria-label="Schließen">&times;</button>
+    <div class="modal-figure is-placeholder" id="modal-figure" role="img" aria-label="Bild zur Sehenswürdigkeit"></div>
+    <p class="modal-credit" id="modal-credit"></p>
+    <div class="modal-body">
+      <span class="tag" id="modal-tag"></span>
+      <h2 id="sight-modal-title"></h2>
+      <p class="modal-summary" id="modal-summary"></p>
+      <dl class="modal-facts" id="modal-facts" hidden></dl>
+      <p class="modal-note" id="modal-note" hidden></p>
+      <h3 class="modal-links-head">Mehr dazu</h3>
+      <ul class="modal-links" id="modal-links"></ul>
+    </div>
+  </dialog>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -211,5 +249,6 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/sightseeing.js"></script>
 </body>
 </html>
