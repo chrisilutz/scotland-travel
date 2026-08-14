@@ -335,6 +335,50 @@ img { max-width: 100%; display: block; }
   font-size: 0.9rem;
 }
 
+/* ============ Essen: Lokal-Karten ============ */
+
+.food-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+.badge-meal,
+.badge-veg {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+.badge-meal { color: var(--slate-700); background: rgba(13, 31, 24, 0.07); }
+/* rein vegetarisch/vegan hervorheben, gemischte Küche dezenter */
+.badge-veg { color: var(--green-600); background: rgba(61, 132, 101, 0.14); }
+.badge-veg.partial { color: #937717; background: rgba(201, 162, 39, 0.16); }
+
+.food-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(13, 31, 24, 0.08);
+  font-size: 0.87rem;
+  font-weight: 600;
+}
+
+.food-note {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.2rem;
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  background: rgba(201, 162, 39, 0.1);
+  font-size: 0.9rem;
+  color: var(--slate-700);
+}
+
 /* Nur für Screenreader */
 .sr-only {
   position: absolute;
