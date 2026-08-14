@@ -34,7 +34,8 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html agenda.html map.html sightseeing.html essen.html links.html _site/
-          cp -r css js _site/
+          cp sw.js manifest.webmanifest _site/
+          cp -r css js icons _site/
 
       - name: Pages konfigurieren
         uses: actions/configure-pages@v5
