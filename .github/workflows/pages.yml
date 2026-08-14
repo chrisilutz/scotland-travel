@@ -33,7 +33,7 @@ jobs:
         # Workflows und Deploy-Configs nicht mit veröffentlicht werden.
         run: |
           mkdir -p _site
-          cp index.html agenda.html map.html sightseeing.html links.html _site/
+          cp index.html agenda.html map.html sightseeing.html essen.html links.html _site/
           cp -r css js _site/
 
       - name: Pages konfigurieren
