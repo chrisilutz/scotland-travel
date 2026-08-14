@@ -11,6 +11,7 @@ mit dem Zug von Würzburg über Brüssel und London nach Aberdeen, Inverness und
 | `agenda.html` | `/agenda` | Tagesweiser Reiseplan mit Zeiten, Wagen-/Platznummern und Referenzen |
 | `map.html` | `/map` | Interaktive Leaflet-Karte mit allen Stationen und der Route |
 | `sightseeing.html` | `/sightseeing` | Sehenswürdigkeiten und Aktivitäten je Station |
+| `essen.html` | `/essen` | Afternoon Tea und Dinner je Station, mit vegetarischer Kennzeichnung |
 | `links.html` | `/links` | Alle Buchungsreferenzen und externen Links |
 
 ## Technik
@@ -25,7 +26,8 @@ Vanilla HTML/CSS/JS, kein Build-Step, keine Frameworks. Externe Abhängigkeiten:
   Platzhalter stehen — das Popup funktioniert vollständig ohne Bild.
 
 ```
-├── index.html · agenda.html · map.html · sightseeing.html · links.html
+├── index.html · agenda.html · map.html · sightseeing.html
+├── essen.html · links.html
 ├── css/style.css      Gesamtes Styling (dunkelgrün/slate, mobile-first)
 └── js/
     ├── main.js         Mobile-Navigation + Countdown
