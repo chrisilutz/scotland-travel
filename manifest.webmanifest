@@ -1,0 +1,54 @@
+{
+  "name": "Schottland 2026 · Reiseplan",
+  "short_name": "Schottland 26",
+  "description": "Reiseplan, Karte, Sightseeing und Buchungsreferenzen der Schottland-Reise vom 04. bis 14. September 2026 — auch offline.",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#12291f",
+  "theme_color": "#0d1f18",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agenda",
+      "short_name": "Agenda",
+      "description": "Tagesweiser Reiseplan",
+      "url": "agenda.html"
+    },
+    {
+      "name": "Karte",
+      "short_name": "Karte",
+      "description": "Alle Stationen und die Route",
+      "url": "map.html"
+    },
+    {
+      "name": "Buchungen",
+      "short_name": "Buchungen",
+      "description": "Alle Referenznummern und Tickets",
+      "url": "links.html"
+    }
+  ]
+}

@@ -25,12 +25,30 @@ Vanilla HTML/CSS/JS, kein Build-Step, keine Frameworks. Externe Abhängigkeiten:
   `origin=*`, kein Key). Ist sie nicht erreichbar, bleibt ein gestalteter
   Platzhalter stehen — das Popup funktioniert vollständig ohne Bild.
 
+## Offline & Installation (PWA)
+
+Die Seite ist installierbar und funktioniert offline. `sw.js` legt beim ersten
+Besuch alle sechs Seiten samt CSS, JS und Icons ab; Schriften, Leaflet,
+besuchte Kartenkacheln und Wikipedia-Bilder kommen beim Surfen dazu.
+
+Strategien: Seitenaufrufe **network-first** (online immer aktuell, offline aus
+dem Cache), eigenes CSS/JS **stale-while-revalidate**, Fonts und Leaflet
+**cache-first**, Kartenkacheln und Bilder **cache-first mit Obergrenze**
+(400 Kacheln, 60 Bilder).
+
+**Wichtig beim Ändern der Shell-Dateien:** `VERSION` in `sw.js` erhöhen. Nur
+dann wird neu vorgeladen und die alte Cache-Generation entfernt.
+
+Nicht offline verfügbar: das Komoot-Embed (fremde Seite im iframe) und
+Kartenausschnitte, die noch nie geladen wurden.
+
 ```
 ├── index.html · agenda.html · map.html · sightseeing.html
 ├── essen.html · links.html
+├── manifest.webmanifest · sw.js · icons/
 ├── css/style.css      Gesamtes Styling (dunkelgrün/slate, mobile-first)
 └── js/
-    ├── main.js         Mobile-Navigation + Countdown
+    ├── main.js         Navigation, Countdown, Service-Worker-Registrierung
     ├── map.js          Leaflet-Karte: Marker, Popups, Routen-Polylines
     └── sightseeing.js  Inhalte & Detail-Popups der Sehenswürdigkeiten
 ```

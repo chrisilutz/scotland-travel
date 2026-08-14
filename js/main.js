@@ -1,7 +1,55 @@
-/* Gemeinsames JS: Mobile-Navigation + Countdown */
+/* Gemeinsames JS: Mobile-Navigation, Countdown, Service Worker */
 
 (function () {
   "use strict";
+
+  /* ---- Service Worker: Offline-Nutzung & Installation ----
+     Relativer Pfad, damit der Scope auch unter einem Unterverzeichnis
+     stimmt (GitHub Pages liefert unter /scotland-travel/ aus). */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {
+        /* Kein Grund, die Seite zu stören — sie funktioniert auch ohne. */
+      });
+    });
+  }
+
+  /* ---- Installieren-Button ----
+     Erscheint nur, wenn der Browser die Installation anbietet. Safari auf
+     iOS feuert kein beforeinstallprompt — dort geht es über Teilen →
+     „Zum Home-Bildschirm". */
+  var installEvent = null;
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    installEvent = e;
+    showInstallButton();
+  });
+
+  window.addEventListener("appinstalled", function () {
+    installEvent = null;
+    var btn = document.querySelector(".install-btn");
+    if (btn) btn.remove();
+  });
+
+  function showInstallButton() {
+    var footer = document.querySelector(".footer-inner");
+    if (!footer || footer.querySelector(".install-btn")) return;
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "install-btn";
+    btn.textContent = "App installieren";
+    btn.addEventListener("click", function () {
+      if (!installEvent) return;
+      installEvent.prompt();
+      installEvent.userChoice.then(function () {
+        installEvent = null;
+        btn.remove();
+      });
+    });
+    footer.appendChild(btn);
+  }
 
   /* ---- Mobile-Nav ---- */
   var toggle = document.querySelector(".nav-toggle");
