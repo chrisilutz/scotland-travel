@@ -381,6 +381,25 @@ img { max-width: 100%; display: block; }
 .weather-detail dd { margin: 0; font-weight: 600; color: var(--green-800); font-variant-numeric: tabular-nums; }
 
 .weather-stamp { margin-top: 0.8rem; font-size: 0.78rem; color: var(--slate-500); }
+
+/* Mini-Karte in der Wetterkarte */
+.weather-map {
+  height: 220px;
+  margin-top: 1.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(13, 31, 24, 0.12);
+  overflow: hidden;
+  z-index: 0;                 /* unter der Sticky-Navigation bleiben */
+}
+.weather-map[hidden] { display: none; }
+.weather-map .leaflet-control-attribution { font-size: 0.65rem; }
+
+.weather-maplink {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.87rem;
+  font-weight: 600;
+}
 .weather-loading, .weather-fail { color: var(--slate-500); font-size: 0.95rem; }
 .weather-geo-error { margin-top: 0.6rem; font-size: 0.85rem; color: #9a3412; }
 

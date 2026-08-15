@@ -34,8 +34,13 @@ sind — die Zuordnung Datum → Ort steht im Array `TRIP` in `js/weather.js`.
 Außerhalb des Reisezeitraums ist Aberdeen voreingestellt; über die Knöpfe
 lässt sich zwischen den vier Basisstationen umschalten.
 
+Unter den Wetterdaten zeigt eine kompakte Leaflet-Karte den jeweiligen Ort —
+dieselbe Technik wie auf der Kartenseite, also OpenStreetMap ohne API-Schlüssel.
+Ist Leaflet nicht erreichbar, bleibt der Kartenbereich ausgeblendet und die
+Textangaben stehen weiterhin.
+
 „Mein Standort" nutzt die Geolocation des Browsers und zeigt zusätzlich die
-Entfernung zur nächsten Reisestation. Die Koordinaten werden vor der Abfrage
+Entfernung zur nächsten Reisestation, auf der Mini-Karte mit Genauigkeitskreis. Die Koordinaten werden vor der Abfrage
 auf zwei Nachkommastellen gerundet (rund 1 km) — die genaue Position verlässt
 das Gerät nicht. Auf der Karte gibt es dafür den Knopf ◎ oben links; dort
 bleibt die Position rein lokal.
