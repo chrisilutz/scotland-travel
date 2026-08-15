@@ -24,6 +24,21 @@ Vanilla HTML/CSS/JS, kein Build-Step, keine Frameworks. Externe Abhängigkeiten:
 - **Wikipedia-API** für die Fotos in den Sightseeing-Popups (CORS via
   `origin=*`, kein Key). Ist sie nicht erreichbar, bleibt ein gestalteter
   Platzhalter stehen — das Popup funktioniert vollständig ohne Bild.
+- **Open-Meteo** für das Wetter (CORS, kein Key, keine Registrierung).
+  Offline zeigt die Karte den zuletzt abgerufenen Stand und weist darauf hin.
+
+## Wetter & Standort
+
+Die Startseite zeigt das Wetter an dem Ort, an dem wir laut Reiseplan heute
+sind — die Zuordnung Datum → Ort steht im Array `TRIP` in `js/weather.js`.
+Außerhalb des Reisezeitraums ist Aberdeen voreingestellt; über die Knöpfe
+lässt sich zwischen den vier Basisstationen umschalten.
+
+„Mein Standort" nutzt die Geolocation des Browsers und zeigt zusätzlich die
+Entfernung zur nächsten Reisestation. Die Koordinaten werden vor der Abfrage
+auf zwei Nachkommastellen gerundet (rund 1 km) — die genaue Position verlässt
+das Gerät nicht. Auf der Karte gibt es dafür den Knopf ◎ oben links; dort
+bleibt die Position rein lokal.
 
 ## Offline & Installation (PWA)
 

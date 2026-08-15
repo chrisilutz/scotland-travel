@@ -335,4 +335,58 @@
   /* ---- Ausschnitt auf alle Stationen ---- */
   var all = Object.keys(stations).map(function (k) { return stations[k].coords; });
   map.fitBounds(L.latLngBounds(all).pad(0.08));
+
+  /* ---- Eigener Standort ----
+     Rein lokal: die Position wird nur auf der Karte angezeigt und nirgends
+     hingeschickt. */
+  var meMarker = null, meCircle = null;
+
+  var LocateControl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd: function () {
+      var wrap = L.DomUtil.create("div", "leaflet-bar leaflet-control locate-control");
+      var link = L.DomUtil.create("a", "", wrap);
+      link.href = "#";
+      link.title = "Meinen Standort anzeigen";
+      link.setAttribute("role", "button");
+      link.innerHTML = "◎";
+      L.DomEvent.on(link, "click", function (e) {
+        L.DomEvent.stop(e);
+        link.classList.add("busy");
+        map.locate({ setView: true, maxZoom: 13, enableHighAccuracy: false, timeout: 10000 });
+      });
+      L.DomEvent.disableClickPropagation(wrap);
+      return wrap;
+    }
+  });
+  map.addControl(new LocateControl());
+
+  map.on("locationfound", function (e) {
+    var busy = document.querySelector(".locate-control a");
+    if (busy) busy.classList.remove("busy");
+
+    if (meMarker) map.removeLayer(meMarker);
+    if (meCircle) map.removeLayer(meCircle);
+
+    meCircle = L.circle(e.latlng, {
+      radius: e.accuracy,
+      color: "#2563a8", weight: 1, fillColor: "#2563a8", fillOpacity: 0.12
+    }).addTo(map);
+
+    meMarker = L.circleMarker(e.latlng, {
+      radius: 7, color: "#fff", weight: 3, fillColor: "#2563a8", fillOpacity: 1
+    }).addTo(map).bindPopup(
+      '<div class="popup-title">Mein Standort</div>' +
+      '<div class="popup-desc">Genauigkeit ca. ' + Math.round(e.accuracy) + " m</div>"
+    ).openPopup();
+  });
+
+  map.on("locationerror", function () {
+    var busy = document.querySelector(".locate-control a");
+    if (busy) busy.classList.remove("busy");
+    L.popup()
+      .setLatLng(map.getCenter())
+      .setContent('<div class="popup-desc">Standort konnte nicht ermittelt werden.</div>')
+      .openOn(map);
+  });
 })();
