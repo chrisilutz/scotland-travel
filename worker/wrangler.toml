@@ -1,0 +1,26 @@
+name = "schottland-position"
+main = "position-worker.js"
+
+# Auf ein aktuelles Datum setzen — davon hängt ab, welche Runtime-Features
+# zur Verfügung stehen (hier: AbortSignal.timeout).
+compatibility_date = "2026-08-01"
+
+[vars]
+# Unkritische Werte, dürfen im Repository stehen.
+ALLOWED_ORIGIN = "https://chrisilutz.github.io"
+TRIP_START = "2026-09-04"
+TRIP_END = "2026-09-14"
+HA_ENTITY = "person.chrisi"
+
+# HA_URL und HA_TOKEN gehören NICHT hierher, sondern als Secrets:
+#
+#   npx wrangler secret put HA_URL     # z. B. https://ha.deine-domain.de
+#   npx wrangler secret put HA_TOKEN   # Long-Lived Access Token aus HA
+#
+# Secrets liegen verschlüsselt bei Cloudflare, tauchen weder im Repository
+# noch im Browser auf und sind über das Dashboard nicht mehr auslesbar.
+
+# Optional: eigene Route statt der workers.dev-Adresse
+# [[routes]]
+# pattern = "position.deine-domain.de/*"
+# custom_domain = true
