@@ -10,18 +10,20 @@
    - Fonts & Leaflet    cache-first (versionierte, stabile URLs)
    - Kartenkacheln      cache-first mit Obergrenze
    - Wikipedia-Bilder   cache-first mit Obergrenze
+   - Wetter (Open-Meteo) network-first, offline der letzte Stand
 
    Version erhöhen, wenn sich die Shell-Dateien ändern — der alte Cache
    wird beim Aktivieren entfernt.
 */
 
-var VERSION = "v1";
+var VERSION = "v2";
 var SHELL = "schottland-shell-" + VERSION;
 var RUNTIME = "schottland-runtime-" + VERSION;
 var TILES = "schottland-tiles-" + VERSION;
 var IMAGES = "schottland-images-" + VERSION;
+var WEATHER = "schottland-weather-" + VERSION;
 
-var CURRENT = [SHELL, RUNTIME, TILES, IMAGES];
+var CURRENT = [SHELL, RUNTIME, TILES, IMAGES, WEATHER];
 
 /* Obergrenzen, damit der Speicher nicht unbegrenzt wächst */
 var MAX_TILES = 400;
@@ -39,6 +41,7 @@ var SHELL_FILES = [
   "js/main.js",
   "js/map.js",
   "js/sightseeing.js",
+  "js/weather.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png",
@@ -156,6 +159,29 @@ self.addEventListener("fetch", function (event) {
   /* Eigene Dateien */
   if (sameOrigin) {
     event.respondWith(staleWhileRevalidate(request, SHELL));
+    return;
+  }
+
+  /* Wetter: immer erst ans Netz, offline den zuletzt geholten Stand.
+     Die Seite erkennt am Zeitstempel selbst, dass er alt ist. */
+  if (host === "api.open-meteo.com") {
+    event.respondWith(
+      fetch(request).then(function (response) {
+        if (response && response.ok) {
+          var copy = response.clone();
+          caches.open(WEATHER).then(function (cache) { cache.put(request, copy); });
+        }
+        return response;
+      }).catch(function () {
+        return caches.open(WEATHER).then(function (cache) {
+          return cache.match(request).then(function (hit) {
+            /* Nur exakte Treffer: ein Stand für einen anderen Ort wäre
+               irreführend. Sonst scheitert der Abruf und die Seite sagt es. */
+            return hit || Response.error();
+          });
+        });
+      })
+    );
     return;
   }
 

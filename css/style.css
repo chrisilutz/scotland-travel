@@ -335,6 +335,93 @@ img { max-width: 100%; display: block; }
   font-size: 0.9rem;
 }
 
+/* ============ Wetterkarte (Startseite) ============ */
+
+.weather-card {
+  background: #fff;
+  border: 1px solid rgba(13, 31, 24, 0.08);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow);
+  max-width: 34rem;
+}
+
+.weather-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.7rem; }
+.weather-place { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: var(--green-900); }
+.weather-note { font-size: 0.85rem; color: var(--slate-500); }
+
+.weather-now {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  margin: 0.9rem 0 0.2rem;
+}
+.weather-icon { font-size: 2.6rem; line-height: 1; }
+.weather-temp {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--green-900);
+  font-variant-numeric: tabular-nums;
+}
+.weather-desc { font-size: 1rem; color: var(--slate-700); }
+
+.weather-detail {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.3rem 1.2rem;
+  justify-content: start;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(13, 31, 24, 0.08);
+  font-size: 0.9rem;
+}
+.weather-detail dt { color: var(--slate-500); }
+.weather-detail dd { margin: 0; font-weight: 600; color: var(--green-800); font-variant-numeric: tabular-nums; }
+
+.weather-stamp { margin-top: 0.8rem; font-size: 0.78rem; color: var(--slate-500); }
+.weather-loading, .weather-fail { color: var(--slate-500); font-size: 0.95rem; }
+.weather-geo-error { margin-top: 0.6rem; font-size: 0.85rem; color: #9a3412; }
+
+.weather-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(13, 31, 24, 0.08);
+}
+.weather-switch button {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--slate-700);
+  background: var(--paper);
+  border: 1px solid rgba(13, 31, 24, 0.12);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.weather-switch button:hover { border-color: var(--green-500); color: var(--green-800); }
+.weather-switch button.active {
+  color: var(--cream);
+  background: var(--green-700);
+  border-color: var(--green-700);
+}
+.weather-switch button:disabled { opacity: 0.6; cursor: default; }
+.weather-switch button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* Standort-Knopf auf der Karte */
+.locate-control a {
+  font-size: 1.15rem;
+  line-height: 30px;
+  text-align: center;
+  color: var(--green-800);
+}
+.locate-control a.busy { opacity: 0.45; }
+
 /* ============ Essen: Lokal-Karten ============ */
 
 .food-badges {
