@@ -34,7 +34,14 @@
       ]
     },
     { date: "2026-09-08", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Anreise aus Inverness" },
-    { date: "2026-09-09", name: "Stirling",          coords: [56.1239, -3.9470], note: "Tagesausflug" },
+    {
+      date: "2026-09-09", name: "Stirling", coords: [56.1239, -3.9470], note: "Tagesausflug",
+      /* Statt Stirling ist an diesem Tag auch Edinburgh möglich — rund eine
+         Stunde ab Glasgow Queen Street. */
+      alt: [
+        { name: "Edinburgh", coords: [55.9520, -3.1900], note: "Alternative: der große Stadttag" }
+      ]
+    },
     { date: "2026-09-10", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Kelvingrove & West End" },
     { date: "2026-09-11", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Abreise mit dem Sleeper" },
     { date: "2026-09-12", name: "London",            coords: [51.5390, -0.1426], note: "Camden & Hamilton" },

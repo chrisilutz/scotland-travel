@@ -324,6 +324,41 @@
       ]
     },
 
+    edinburgh: {
+      title: "Edinburgh",
+      tag: "Option statt Stirling",
+      coords: [55.9520, -3.1900],
+      wiki: "en:Edinburgh",
+      maps: "https://maps.google.com/?q=Edinburgh+Waverley",
+      summary:
+        "Edinburgh ist als Ziel ungleich größer und dichter als Stirling: das Castle auf dem Burgfelsen, die " +
+        "Royal Mile hinunter nach Holyrood, die mittelalterliche Old Town neben der streng geplanten " +
+        "georgianischen New Town — beide zusammen seit 1995 UNESCO-Welterbe. Dazu Museen, Restaurants und " +
+        "Stadtleben in ganz anderer Dichte. Der Preis dafür ist mehr Lauferei und mehr Andrang; im September " +
+        "ist der große Fringe-Ansturm zwar vorbei, voll ist die Altstadt trotzdem. Und an einem einzigen Tag " +
+        "bleibt es ein Anreißen statt eines richtigen Kennenlernens. Kurz: Stirling ist das kompaktere und " +
+        "ruhigere Erlebnis, Edinburgh das reichere.",
+      facts: [
+        ["Anfahrt", "50 Min. bis 1 Std. 20 ab Glasgow Queen Street, je nach Verbindung"],
+        ["Vor Ort", "bequem 7–8 Std."],
+        ["Eintritt", "Castle kostenpflichtig · Royal Mile, Arthur's Seat und die großen Museen frei"]
+      ],
+      todos: [
+        ["Edinburgh Castle",
+         "Auf dem Vulkanfelsen über der Stadt, mit den schottischen Kronjuwelen und dem Stone of Scone. " +
+         "Der meistbesuchte Ort Schottlands — Tickets vorab sichern, sonst geht Zeit in der Schlange verloren."],
+        ["Royal Mile & Old Town",
+         "Die Achse vom Castle hinunter zum Holyrood Palace, mit den engen Closes und Wynds links und rechts. " +
+         "Gleich daneben die georgianische New Town mit ihren geraden Straßenzügen — der Kontrast der beiden " +
+         "ist der eigentliche Reiz."],
+        ["Arthur's Seat",
+         "Erloschener Vulkan mitten in der Stadt und die eigentliche Wanderung hier: mäßig anstrengend, " +
+         "2 bis 3 Stunden hin und zurück, dafür der beste Rundblick über Edinburgh, den Firth of Forth und " +
+         "bei klarer Sicht bis zu den Highlands."]
+      ],
+      note: "Alternative zum Tagesausflug nach Stirling am Mittwoch, 09.09. — beides an einem Tag geht nicht."
+    },
+
     wallace: {
       title: "National Wallace Monument",
       tag: "Tagesausflug",
