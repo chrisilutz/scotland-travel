@@ -16,7 +16,7 @@
    wird beim Aktivieren entfernt.
 */
 
-var VERSION = "v2";
+var VERSION = "v4";
 var SHELL = "schottland-shell-" + VERSION;
 var RUNTIME = "schottland-runtime-" + VERSION;
 var TILES = "schottland-tiles-" + VERSION;

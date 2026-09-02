@@ -16,15 +16,23 @@
 (function () {
   "use strict";
 
-  var box = document.getElementById("weather");
-  if (!box) return;
+  var body = document.getElementById("weather-body");
+  var mapEl = document.getElementById("weather-map");
+  if (!body) return;
 
   /* ---- Wo sind wir wann? ---- */
   var TRIP = [
     { date: "2026-09-04", name: "London",            coords: [51.5308, -0.1261], note: "Anreise & Nachtzug" },
     { date: "2026-09-05", name: "Aberdeen",          coords: [57.1620, -2.0930], note: "Old Aberdeen & Footdee" },
     { date: "2026-09-06", name: "Inverness",         coords: [57.4700, -4.2385], note: "Anreise aus Aberdeen" },
-    { date: "2026-09-07", name: "Foyers, Loch Ness", coords: [57.2496, -4.4914], note: "Wandertag" },
+    {
+      date: "2026-09-07", name: "Foyers, Loch Ness", coords: [57.2496, -4.4914], note: "Wandertag",
+      /* Für diesen Tag steht die Bahn-Tagestour als Alternative im Raum —
+         beide Orte sind über die Knöpfe erreichbar, die Wahl wird gemerkt. */
+      alt: [
+        { name: "Kyle of Lochalsh", coords: [57.2796, -5.7132], note: "Alternative: Bahn-Tagestour" }
+      ]
+    },
     { date: "2026-09-08", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Anreise aus Inverness" },
     { date: "2026-09-09", name: "Stirling",          coords: [56.1239, -3.9470], note: "Tagesausflug" },
     { date: "2026-09-10", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Kelvingrove & West End" },
@@ -108,6 +116,13 @@
     return { station: best, km: bestD };
   }
 
+  /* Knöpfe sollen schmal bleiben: „Foyers, Loch Ness" → „Loch Ness" */
+  function shortName(name) {
+    if (name.indexOf("Foyers") === 0) return "Loch Ness";
+    if (name.indexOf("Kyle") === 0) return "Kyle";
+    return name;
+  }
+
   function num(v, digits) {
     return typeof v === "number" ? v.toFixed(digits || 0).replace(".", ",") : "–";
   }
@@ -130,6 +145,67 @@
     });
   }
 
+  /* ---- Mini-Karte ----------------------------------------------------
+     Leaflet mit OpenStreetMap, also ohne API-Schlüssel. Ist Leaflet nicht
+     erreichbar, bleibt der Kartenbereich einfach weg — die Textangaben
+     stehen weiterhin. */
+
+  var miniMap = null, miniMarker = null, miniCircle = null;
+
+  var pin = function () {
+    return L.divIcon({
+      className: "",
+      html: '<div style="width:16px;height:16px;border-radius:50% 50% 50% 0;' +
+            'transform:rotate(-45deg);background:#1a3a2c;border:2px solid #f5f1e8;' +
+            'box-shadow:0 2px 6px rgba(0,0,0,.4);"></div>',
+      iconSize: [16, 16], iconAnchor: [8, 16]
+    });
+  };
+
+  function ensureMap() {
+    if (!mapEl || typeof L === "undefined") return null;
+    if (miniMap) return miniMap;
+
+    mapEl.hidden = false;
+    miniMap = L.map(mapEl, {
+      zoomControl: true,
+      scrollWheelZoom: false,     // damit das Scrollen der Seite nicht hängen bleibt
+      attributionControl: true
+    });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(miniMap);
+    return miniMap;
+  }
+
+  function updateMap() {
+    var m = ensureMap();
+    if (!m || !state.coords) return;
+
+    if (miniMarker) { m.removeLayer(miniMarker); miniMarker = null; }
+    if (miniCircle) { m.removeLayer(miniCircle); miniCircle = null; }
+
+    if (state.isGeo) {
+      /* Eigener Standort: Punkt mit Genauigkeitskreis */
+      if (state.accuracy) {
+        miniCircle = L.circle(state.coords, {
+          radius: state.accuracy,
+          color: "#2563a8", weight: 1, fillColor: "#2563a8", fillOpacity: 0.12
+        }).addTo(m);
+      }
+      miniMarker = L.circleMarker(state.coords, {
+        radius: 7, color: "#fff", weight: 3, fillColor: "#2563a8", fillOpacity: 1
+      }).addTo(m);
+    } else {
+      miniMarker = L.marker(state.coords, { icon: pin() }).addTo(m);
+    }
+
+    m.setView(state.coords, state.isGeo ? 12 : 11);
+    /* Der Container ist beim ersten Zeichnen oft noch ohne Maße. */
+    setTimeout(function () { m.invalidateSize(); }, 0);
+  }
+
   /* ---- Darstellung ---- */
 
   var state = { label: null, note: null, coords: null };
@@ -145,7 +221,7 @@
     var ageMin = isNaN(stamp) ? null : Math.round((Date.now() - stamp) / 60000);
     var stale = ageMin !== null && ageMin > 90;
 
-    box.innerHTML =
+    body.innerHTML =
       '<div class="weather-head">' +
         '<span class="weather-place">' + state.label + "</span>" +
         (state.note ? '<span class="weather-note">' + state.note + "</span>" : "") +
@@ -170,13 +246,15 @@
       "</p>";
 
     renderButtons();
+    updateMap();
   }
 
   function renderError(msg) {
-    box.innerHTML =
+    body.innerHTML =
       '<div class="weather-head"><span class="weather-place">' + state.label + "</span></div>" +
       '<p class="weather-fail">' + msg + "</p>";
     renderButtons();
+    updateMap();   /* Ort bleibt sichtbar, auch wenn das Wetter fehlt */
   }
 
   function renderButtons() {
@@ -185,7 +263,15 @@
 
     var today = currentTripDay();
     var options = [];
-    if (today) options.push({ label: "Heute", target: today, note: today.note });
+    if (today) {
+      /* Hat der Tag Alternativen, wird der geplante Ort benannt statt nur
+         „Heute" — sonst wäre nicht erkennbar, wofür man sich entscheidet. */
+      var hasAlt = today.alt && today.alt.length;
+      options.push({ label: hasAlt ? "Heute: " + shortName(today.name) : "Heute", target: today, note: today.note });
+      (today.alt || []).forEach(function (a) {
+        options.push({ label: shortName(a.name), target: a, note: a.note });
+      });
+    }
     BASES.forEach(function (b) { options.push({ label: b.name, target: b }); });
 
     options.forEach(function (o) {
@@ -206,12 +292,35 @@
       row.appendChild(g);
     }
 
-    box.appendChild(row);
+    body.appendChild(row);
+  }
+
+  /* Die Wahl zwischen Wandertag und Bahntour wird pro Tag gemerkt, damit sie
+     beim nächsten Aufruf noch steht. Rein lokal; scheitert das (privates
+     Fenster, blockierte Speicherung), läuft alles unverändert weiter. */
+  function choiceKey(day) { return "schottland-tagwahl-" + day.date; }
+
+  function rememberChoice(day, place) {
+    try { localStorage.setItem(choiceKey(day), place.name); } catch (e) {}
+  }
+
+  function storedChoice(day) {
+    var stored;
+    try { stored = localStorage.getItem(choiceKey(day)); } catch (e) { return null; }
+    if (!stored) return null;
+    if (stored === day.name) return day;
+    var hit = null;
+    (day.alt || []).forEach(function (a) { if (a.name === stored) hit = a; });
+    return hit;
   }
 
   function show(place, note) {
+    var today = currentTripDay();
+    if (today && (place === today || (today.alt || []).indexOf(place) !== -1)) {
+      rememberChoice(today, place);
+    }
     state = { label: place.name, note: note || place.note || null, coords: place.coords, isGeo: false };
-    box.innerHTML = '<p class="weather-loading">Wetter wird geladen …</p>';
+    body.innerHTML = '<p class="weather-loading">Wetter wird geladen …</p>';
     fetchWeather(place.coords)
       .then(render)
       .catch(function () {
@@ -227,6 +336,7 @@
         var coords = [pos.coords.latitude, pos.coords.longitude];
         var near = nearestStation(coords);
         state = {
+          accuracy: pos.coords.accuracy,
           label: "Mein Standort",
           note: near.km < 3
             ? "bei " + near.station.name
@@ -234,7 +344,7 @@
           coords: coords,
           isGeo: true
         };
-        box.innerHTML = '<p class="weather-loading">Wetter wird geladen …</p>';
+        body.innerHTML = '<p class="weather-loading">Wetter wird geladen …</p>';
         fetchWeather(coords).then(render).catch(function () {
           renderError("Standort ermittelt, aber das Wetter ist gerade nicht abrufbar.");
         });
@@ -245,10 +355,10 @@
         var msg = err.code === 1
           ? "Standortfreigabe abgelehnt."
           : "Standort konnte nicht ermittelt werden.";
-        var p = box.querySelector(".weather-geo-error") || document.createElement("p");
+        var p = body.querySelector(".weather-geo-error") || document.createElement("p");
         p.className = "weather-geo-error";
         p.textContent = msg;
-        box.appendChild(p);
+        body.appendChild(p);
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
@@ -256,5 +366,10 @@
 
   /* ---- Start ---- */
   var start = currentTripDay();
-  show(start || BASES[0], start ? start.note : "Voreingestellt — Reisezeitraum liegt außerhalb von heute");
+  if (start) {
+    var chosen = storedChoice(start) || start;
+    show(chosen, chosen.note);
+  } else {
+    show(BASES[0], "Voreingestellt — Reisezeitraum liegt außerhalb von heute");
+  }
 })();

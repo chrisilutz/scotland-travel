@@ -381,6 +381,25 @@ img { max-width: 100%; display: block; }
 .weather-detail dd { margin: 0; font-weight: 600; color: var(--green-800); font-variant-numeric: tabular-nums; }
 
 .weather-stamp { margin-top: 0.8rem; font-size: 0.78rem; color: var(--slate-500); }
+
+/* Mini-Karte in der Wetterkarte */
+.weather-map {
+  height: 220px;
+  margin-top: 1.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(13, 31, 24, 0.12);
+  overflow: hidden;
+  z-index: 0;                 /* unter der Sticky-Navigation bleiben */
+}
+.weather-map[hidden] { display: none; }
+.weather-map .leaflet-control-attribution { font-size: 0.65rem; }
+
+.weather-maplink {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.87rem;
+  font-weight: 600;
+}
 .weather-loading, .weather-fail { color: var(--slate-500); font-size: 0.95rem; }
 .weather-geo-error { margin-top: 0.6rem; font-size: 0.85rem; color: #9a3412; }
 
@@ -673,6 +692,28 @@ img { max-width: 100%; display: block; }
   margin: 1.75rem 0 0.7rem;
 }
 
+/* Programmpunkte vor Ort */
+.modal-todos {
+  list-style: none;
+  display: grid;
+  gap: 0.9rem;
+}
+.modal-todos[hidden] { display: none; }
+.modal-todos li {
+  padding-left: 0.9rem;
+  border-left: 2px solid rgba(61, 132, 101, 0.35);
+}
+.modal-todos strong {
+  display: block;
+  color: var(--green-800);
+  margin-bottom: 0.15rem;
+}
+.modal-todos span {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--slate-700);
+}
+
 .modal-links { list-style: none; display: grid; gap: 0.5rem; }
 .modal-links a {
   display: flex;
@@ -837,6 +878,43 @@ img { max-width: 100%; display: block; }
 .badge-travel { background: rgba(37, 99, 168, 0.12); color: var(--rail-blue); }
 .badge-stay { background: rgba(61, 132, 101, 0.14); color: var(--green-600); }
 .badge-hike { background: rgba(201, 162, 39, 0.16); color: #937717; }
+
+/* Alternativvorschlag innerhalb eines Reisetags */
+.day-alt {
+  margin-top: 1.4rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px dashed rgba(13, 31, 24, 0.22);
+  border-radius: var(--radius);
+  background: rgba(61, 132, 101, 0.05);
+}
+.day-alt h4 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green-900);
+  margin-bottom: 0.3rem;
+}
+.day-alt .day-sub { margin-bottom: 0.7rem; }
+.day-alt .day-items li { font-size: 0.94rem; }
+
+.day-plan-head {
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate-500);
+}
+.day-plan {
+  margin: 0.5rem 0 0;
+  padding-left: 1.3rem;
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.94rem;
+}
+.day-plan li::marker { color: var(--gold); font-weight: 700; }
+.day-plan strong { color: var(--green-800); }
+.day-hint { margin-top: 0.8rem; font-size: 0.85rem; color: var(--slate-500); }
 
 .komoot-embed {
   margin-top: 1.25rem;
