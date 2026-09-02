@@ -73,6 +73,11 @@
       name: "Kyle of Lochalsh",
       desc: "Tagesausflug ab Inverness über die Kyle Line — eine der schönsten Bahnstrecken Großbritanniens."
     },
+    edinburgh: {
+      coords: [55.9520, -3.1900],
+      name: "Edinburgh Waverley",
+      desc: "Optionaler Tagesausflug ab Glasgow statt Stirling — Castle, Royal Mile, Arthur's Seat. Rund 1 Std. Fahrt."
+    },
     glasgow: {
       coords: [55.8590, -4.2460],
       name: "Glasgow — Airbnb Merchant City",
@@ -262,6 +267,20 @@
       [57.2796, -5.7132]   // Kyle of Lochalsh
     ],
 
+    /* Optionaler Tagesausflug statt Stirling: Edinburgh & Glasgow Main Line
+       über Croy, Falkirk High und Linlithgow */
+    glasgowEdinburgh: [
+      [55.8620, -4.2510],  // Glasgow Queen Street
+      [55.9040, -4.2200],  // Bishopbriggs
+      [55.9280, -4.1520],  // Lenzie
+      [55.9560, -4.0290],  // Croy
+      [55.9940, -3.7930],  // Falkirk High
+      [55.9900, -3.7130],  // Polmont
+      [55.9770, -3.6010],  // Linlithgow
+      [55.9457, -3.2180],  // Edinburgh Haymarket
+      [55.9520, -3.1900]   // Edinburgh Waverley
+    ],
+
     /* Tagesausflug über dieselbe Strecke wie die Anreise aus dem Norden */
     glasgowStirling: [
       [55.8620, -4.2510],  // Glasgow Queen Street
@@ -301,6 +320,7 @@
     { type: "excursion", label: "Kyle Line: Inverness → Kyle of Lochalsh",       pts: corridor.invernessKyle },
     { type: "train",     label: "Highland Main Line: Inverness → Glasgow",       pts: corridor.invernessGlasgow },
     { type: "excursion", label: "Tagesausflug: Glasgow → Stirling",              pts: corridor.glasgowStirling },
+    { type: "excursion", label: "Option statt Stirling: Glasgow → Edinburgh",    pts: corridor.glasgowEdinburgh },
     { type: "sleeper",   label: "Caledonian Sleeper: Glasgow → London",          pts: corridor.sleeperGlasgowLondon },
     { type: "eurostar",  label: "Eurostar: London → Brüssel",                    pts: reverse(corridor.eurostarBruesselLondon) },
     { type: "train",     label: "ICE: Brüssel → Würzburg",                       pts: reverse(corridor.iceWuerzburgBruessel) }
