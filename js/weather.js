@@ -25,7 +25,14 @@
     { date: "2026-09-04", name: "London",            coords: [51.5308, -0.1261], note: "Anreise & Nachtzug" },
     { date: "2026-09-05", name: "Aberdeen",          coords: [57.1620, -2.0930], note: "Old Aberdeen & Footdee" },
     { date: "2026-09-06", name: "Inverness",         coords: [57.4700, -4.2385], note: "Anreise aus Aberdeen" },
-    { date: "2026-09-07", name: "Foyers, Loch Ness", coords: [57.2496, -4.4914], note: "Wandertag" },
+    {
+      date: "2026-09-07", name: "Foyers, Loch Ness", coords: [57.2496, -4.4914], note: "Wandertag",
+      /* Für diesen Tag steht die Bahn-Tagestour als Alternative im Raum —
+         beide Orte sind über die Knöpfe erreichbar, die Wahl wird gemerkt. */
+      alt: [
+        { name: "Kyle of Lochalsh", coords: [57.2796, -5.7132], note: "Alternative: Bahn-Tagestour" }
+      ]
+    },
     { date: "2026-09-08", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Anreise aus Inverness" },
     { date: "2026-09-09", name: "Stirling",          coords: [56.1239, -3.9470], note: "Tagesausflug" },
     { date: "2026-09-10", name: "Glasgow",           coords: [55.8590, -4.2460], note: "Kelvingrove & West End" },
@@ -107,6 +114,13 @@
       if (d < bestD) { bestD = d; best = s; }
     });
     return { station: best, km: bestD };
+  }
+
+  /* Knöpfe sollen schmal bleiben: „Foyers, Loch Ness" → „Loch Ness" */
+  function shortName(name) {
+    if (name.indexOf("Foyers") === 0) return "Loch Ness";
+    if (name.indexOf("Kyle") === 0) return "Kyle";
+    return name;
   }
 
   function num(v, digits) {
@@ -249,7 +263,15 @@
 
     var today = currentTripDay();
     var options = [];
-    if (today) options.push({ label: "Heute", target: today, note: today.note });
+    if (today) {
+      /* Hat der Tag Alternativen, wird der geplante Ort benannt statt nur
+         „Heute" — sonst wäre nicht erkennbar, wofür man sich entscheidet. */
+      var hasAlt = today.alt && today.alt.length;
+      options.push({ label: hasAlt ? "Heute: " + shortName(today.name) : "Heute", target: today, note: today.note });
+      (today.alt || []).forEach(function (a) {
+        options.push({ label: shortName(a.name), target: a, note: a.note });
+      });
+    }
     BASES.forEach(function (b) { options.push({ label: b.name, target: b }); });
 
     options.forEach(function (o) {
@@ -273,7 +295,30 @@
     body.appendChild(row);
   }
 
+  /* Die Wahl zwischen Wandertag und Bahntour wird pro Tag gemerkt, damit sie
+     beim nächsten Aufruf noch steht. Rein lokal; scheitert das (privates
+     Fenster, blockierte Speicherung), läuft alles unverändert weiter. */
+  function choiceKey(day) { return "schottland-tagwahl-" + day.date; }
+
+  function rememberChoice(day, place) {
+    try { localStorage.setItem(choiceKey(day), place.name); } catch (e) {}
+  }
+
+  function storedChoice(day) {
+    var stored;
+    try { stored = localStorage.getItem(choiceKey(day)); } catch (e) { return null; }
+    if (!stored) return null;
+    if (stored === day.name) return day;
+    var hit = null;
+    (day.alt || []).forEach(function (a) { if (a.name === stored) hit = a; });
+    return hit;
+  }
+
   function show(place, note) {
+    var today = currentTripDay();
+    if (today && (place === today || (today.alt || []).indexOf(place) !== -1)) {
+      rememberChoice(today, place);
+    }
     state = { label: place.name, note: note || place.note || null, coords: place.coords, isGeo: false };
     body.innerHTML = '<p class="weather-loading">Wetter wird geladen …</p>';
     fetchWeather(place.coords)
@@ -321,5 +366,10 @@
 
   /* ---- Start ---- */
   var start = currentTripDay();
-  show(start || BASES[0], start ? start.note : "Voreingestellt — Reisezeitraum liegt außerhalb von heute");
+  if (start) {
+    var chosen = storedChoice(start) || start;
+    show(chosen, chosen.note);
+  } else {
+    show(BASES[0], "Voreingestellt — Reisezeitraum liegt außerhalb von heute");
+  }
 })();

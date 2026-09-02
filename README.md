@@ -34,6 +34,11 @@ sind — die Zuordnung Datum → Ort steht im Array `TRIP` in `js/weather.js`.
 Außerhalb des Reisezeitraums ist Aberdeen voreingestellt; über die Knöpfe
 lässt sich zwischen den vier Basisstationen umschalten.
 
+Ein Reisetag kann Alternativen haben — Feld `alt` im jeweiligen `TRIP`-Eintrag.
+Am Montag, 07.09. stehen so Loch Ness und Kyle of Lochalsh nebeneinander; die
+getroffene Wahl wird pro Tag im `localStorage` gemerkt und beim nächsten Aufruf
+wiederhergestellt.
+
 Unter den Wetterdaten zeigt eine kompakte Leaflet-Karte den jeweiligen Ort —
 dieselbe Technik wie auf der Kartenseite, also OpenStreetMap ohne API-Schlüssel.
 Ist Leaflet nicht erreichbar, bleibt der Kartenbereich ausgeblendet und die
