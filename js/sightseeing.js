@@ -10,6 +10,7 @@
    links:  recherchierte Quellen (offizielle Seiten, Reiseblogs)
    maps:   Google-Maps-Link; ohne Angabe aus coords erzeugt
    facts:  praktische Angaben (Eintritt, Öffnungszeiten, Anfahrt)
+   todos:  Programmpunkte vor Ort, als [Titel, Beschreibung]
    note:   Hinweis, der hervorgehoben wird
 */
 
@@ -188,9 +189,35 @@
         "Bahnstrecken Großbritanniens: gut zweieinhalb Stunden durch Glen Carron, vorbei an Lochs und Bergketten " +
         "bis ans Meer. Am Endpunkt liegt die Skye Bridge, die seit 1995 zur Isle of Skye führt und heute mautfrei " +
         "ist. Wenige Kilometer vorher steht Eilean Donan Castle, die meistfotografierte Burg des Landes, " +
-        "allerdings nur mit dem Bus erreichbar. Als Tagesausflug ab Inverness bleibt vor Ort etwa eine Stunde " +
-        "Aufenthalt — die Fahrt selbst ist hier das Ziel.",
-      facts: [["Fahrtzeit", "ca. 2,5 Std. je Richtung ab Inverness"]]
+        "allerdings nur mit dem Bus erreichbar. Als Tagesausflug bleiben knapp sechs Stunden vor Ort — genug für " +
+        "die Skye Bridge, den Hafen, ein ausgiebiges Mittagessen und einen Abstecher nach Skye hinüber.",
+      facts: [
+        ["Hinfahrt", "08:53 ab Inverness, an 11:31 · 2 Std. 38 Min."],
+        ["Vor Ort", "5 Std. 40 Min."],
+        ["Rückfahrt", "17:13 ab Kyle, an 19:59 · 2 Std. 46 Min."]
+      ],
+      todos: [
+        ["The Plock (Cnoc Trail)",
+         "Gemeinschaftlich verwaltetes Naturreservat auf der Halbinsel über dem Dorf — ein ehemaliger " +
+         "Golfplatz, den sich die Natur zurückgeholt hat, mit gut gepflegten Wegen. Rund eine Stunde " +
+         "hinauf zu den Aussichtspunkten, dafür Panorama über Skye Bridge, die Cuillins und den Loch. " +
+         "Von allen Optionen das beste Verhältnis von Aufwand zu Aussicht."],
+        ["Über die Skye Bridge laufen",
+         "Ein asphaltierter Fußweg führt über die gesamte Brücke, von der Main Street beziehungsweise " +
+         "Station Road in Kyle bis zum Kreisverkehr in Kyleakin auf Skye. Die beiden Spannbögen geben in " +
+         "jede Richtung Panorama frei, unterwegs blickt man auf das weiß getünchte Häuschen auf Eilean Bàn " +
+         "hinunter, und mit etwas Glück spielen Otter am Ufer. Flach und einfach — gut mit einem " +
+         "Mittagessen auf der Skye-Seite zu verbinden."],
+        ["Eilean Bàn",
+         "Die kleine Insel unter der Brücke, einst Wohnsitz des Naturforschers Gavin Maxwell " +
+         "(„Ring of Bright Water“). Von der Brücke aus gut zu sehen. Führungen auf die Insel gibt es, " +
+         "sie müssen aber vorab gebucht werden — ohne Anmeldung also eher aus der Ferne."]
+      ],
+      note: "Mögliche Alternative zur Loch-Ness-Wanderung am Montag, 07.09. Ein Ablaufvorschlag steht in der Agenda.",
+      links: [
+        { label: "The Plock", note: "Karte", url: "https://www.google.com/maps/search/?api=1&query=The+Plock+Kyle+of+Lochalsh" },
+        { label: "Skye Bridge", note: "Karte", url: "https://www.google.com/maps/search/?api=1&query=Skye+Bridge+Kyle+of+Lochalsh" }
+      ]
     },
 
     /* ---------------- Glasgow & Stirling ---------------- */
@@ -440,6 +467,8 @@
   var elSummary = document.getElementById("modal-summary");
   var elFacts = document.getElementById("modal-facts");
   var elNote = document.getElementById("modal-note");
+  var elTodosHead = document.getElementById("modal-todos-head");
+  var elTodos = document.getElementById("modal-todos");
   var elLinks = document.getElementById("modal-links");
   var elFigure = document.getElementById("modal-figure");
   var elCredit = document.getElementById("modal-credit");
@@ -555,6 +584,15 @@
       })
       .join("");
     elFacts.hidden = !(s.facts && s.facts.length);
+
+    /* Programmpunkte vor Ort, falls hinterlegt */
+    elTodos.innerHTML = (s.todos || [])
+      .map(function (t) {
+        return "<li><strong>" + esc(t[0]) + "</strong><span>" + esc(t[1]) + "</span></li>";
+      })
+      .join("");
+    elTodos.hidden = !(s.todos && s.todos.length);
+    elTodosHead.hidden = elTodos.hidden;
 
     elNote.textContent = s.note || "";
     elNote.hidden = !s.note;
