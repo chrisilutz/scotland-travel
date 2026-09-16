@@ -89,6 +89,21 @@ Nützliche Schalter:
 | `--base-url` | Präfix für die URLs, etwa eine CDN-Adresse |
 | `--max-edge` | längste Kante der großen Fassung (Vorgabe 1600) |
 
+### Fotos mehrerer Personen
+
+Das Skript nimmt mehrere Quellordner entgegen — etwa je einen Takeout-Export
+pro Person:
+
+```bash
+python3 tools/import-photos.py ~/Takeout-Christian ~/Takeout-Vera
+```
+
+Inhaltsgleiche Dateien werden über eine Prüfsumme erkannt und nur einmal
+übernommen. Das greift, wenn dasselbe Foto aus einem geteilten Album in beide
+Bibliotheken gespeichert wurde. Zwei Handys, die dasselbe Motiv fotografiert
+haben, ergeben dagegen verschiedene Dateien und bleiben zu Recht beide
+erhalten. Die Fotos aller Quellen werden nach Aufnahmezeit ineinander sortiert.
+
 ### Takeout oder Album-Download?
 
 Das Skript kommt auch ohne die JSON-Dateien aus — etwa wenn die Bilder direkt

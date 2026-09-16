@@ -29,6 +29,7 @@ damit sie sich ohne installierte Bildbibliothek testen lässt.
 """
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -273,6 +274,24 @@ def in_trip_window(date, start, end):
     return start <= date <= end
 
 
+def file_hash(path, chunk=1 << 20):
+    """Inhaltsprüfsumme, um dieselbe Aufnahme nicht doppelt zu übernehmen.
+
+    Greift, wenn dieselbe Datei in mehreren Exporten steckt — etwa weil ein
+    Foto aus einem geteilten Album in beide Bibliotheken gespeichert wurde.
+    Zwei Handys, die dasselbe Motiv fotografiert haben, ergeben dagegen
+    verschiedene Dateien und bleiben zu Recht beide erhalten.
+    """
+    h = hashlib.sha256()
+    try:
+        with open(path, "rb") as fh:
+            for block in iter(lambda: fh.read(chunk), b""):
+                h.update(block)
+    except OSError:
+        return None
+    return h.hexdigest()
+
+
 # --------------------------------------------------------------------------
 # Bilder verkleinern  (braucht Pillow)
 # --------------------------------------------------------------------------
@@ -295,13 +314,22 @@ def make_derivative(src, dest, max_edge, quality):
 # Hauptlauf
 # --------------------------------------------------------------------------
 
-def collect(takeout_dir, start, end, round_to, verbose=True):
+def collect(takeout_dirs, start, end, round_to, verbose=True):
     """Alle passenden Fotos einsammeln. Gibt (eintraege, statistik)."""
     stats = {"gefunden": 0, "ohne_zeit": 0, "ausserhalb": 0, "ohne_ort": 0,
-             "uebernommen": 0, "heic_uebersprungen": 0, "andere_uebersprungen": 0}
+             "uebernommen": 0, "heic_uebersprungen": 0, "andere_uebersprungen": 0,
+             "doppelt": 0}
     entries = []
+    seen = set()
 
-    for root, _dirs, files in os.walk(takeout_dir):
+    if isinstance(takeout_dirs, str):
+        takeout_dirs = [takeout_dirs]
+
+    walker = ((root, files)
+              for folder in takeout_dirs
+              for root, _dirs, files in os.walk(folder))
+
+    for root, files in walker:
         for name in sorted(files):
             suffix = os.path.splitext(name)[1].lower()
             if suffix not in IMAGE_SUFFIXES:
@@ -312,6 +340,13 @@ def collect(takeout_dir, start, end, round_to, verbose=True):
                 continue
             path = os.path.join(root, name)
             stats["gefunden"] += 1
+
+            digest = file_hash(path)
+            if digest is not None:
+                if digest in seen:
+                    stats["doppelt"] += 1
+                    continue
+                seen.add(digest)
 
             ts = lat = lon = None
             sidecar = find_sidecar(path)
@@ -344,7 +379,9 @@ def collect(takeout_dir, start, end, round_to, verbose=True):
 
 def main():
     ap = argparse.ArgumentParser(description="Takeout-Fotos für die Website aufbereiten")
-    ap.add_argument("takeout", help="Ordner des entpackten Google-Takeout-Exports")
+    ap.add_argument("takeout", nargs="+",
+                    help="Ordner des entpackten Takeout-Exports. Mehrere Angaben sind "
+                         "erlaubt, etwa je ein Export pro Person — Dubletten werden erkannt.")
     ap.add_argument("--out", default="photos", help="Zielordner im Dateisystem (Vorgabe: photos)")
     ap.add_argument("--web-dir", default="photos",
                     help="Pfad, unter dem die Bilder auf der Website liegen (Vorgabe: photos). "
@@ -362,10 +399,12 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="nur auswerten, nichts schreiben")
     args = ap.parse_args()
 
-    if not os.path.isdir(args.takeout):
-        sys.exit(f"Ordner nicht gefunden: {args.takeout}")
+    for folder in args.takeout:
+        if not os.path.isdir(folder):
+            sys.exit(f"Ordner nicht gefunden: {folder}")
 
-    print(f"Durchsuche {args.takeout} …")
+    for folder in args.takeout:
+        print(f"Durchsuche {folder} …")
     entries, stats = collect(args.takeout, args.start, args.end, args.round)
 
     print(f"  Bilddateien gefunden : {stats['gefunden']}")
@@ -373,6 +412,9 @@ def main():
     print(f"  außerhalb der Reise  : {stats['ausserhalb']}")
     print(f"  ohne Koordinaten     : {stats['ohne_ort']} (erscheinen nur im Zeitstrahl)")
     print(f"  übernommen           : {stats['uebernommen']}")
+
+    if stats["doppelt"]:
+        print(f"  Dubletten übersprungen: {stats['doppelt']} (inhaltsgleiche Dateien)")
 
     if stats["heic_uebersprungen"]:
         print(f"\n  ACHTUNG: {stats['heic_uebersprungen']} HEIC/HEIF-Dateien übersprungen.")
