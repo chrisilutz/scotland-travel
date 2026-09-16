@@ -12,6 +12,7 @@ mit dem Zug von Würzburg über Brüssel und London nach Aberdeen, Inverness und
 | `map.html` | `/map` | Interaktive Leaflet-Karte mit allen Stationen und der Route |
 | `sightseeing.html` | `/sightseeing` | Sehenswürdigkeiten und Aktivitäten je Station |
 | `essen.html` | `/essen` | Afternoon Tea und Dinner je Station, mit vegetarischer Kennzeichnung |
+| `fotos.html` | `/fotos` | Reisefotos als Zeitstrahl und auf der Karte |
 | `links.html` | `/links` | Alle Buchungsreferenzen und externen Links |
 
 ## Technik
@@ -50,6 +51,47 @@ auf zwei Nachkommastellen gerundet (rund 1 km) — die genaue Position verlässt
 das Gerät nicht. Auf der Karte gibt es dafür den Knopf ◎ oben links; dort
 bleibt die Position rein lokal.
 
+## Fotos
+
+Die Fotoseite liest `photos.json`. Diese Datei erzeugt `tools/import-photos.py`
+aus einem entpackten Google-Takeout-Export:
+
+```bash
+pip install Pillow
+python3 tools/import-photos.py ~/Downloads/Takeout
+```
+
+Das Skript liest Aufnahmezeit und Koordinaten — bevorzugt aus den JSON-Dateien,
+die Google neben jedes Bild legt, ersatzweise aus dem EXIF im Bild selbst.
+Google kennt dabei mehrere Namensschemata für die Sidecar-Dateien
+(`.json`, `.supplemental-metadata.json`, gekürzte Varianten, `(1)`-Dopplungen);
+alle werden erkannt. Koordinaten `0/0` bedeuten „Ort unbekannt" und werden
+verworfen.
+
+Behalten werden nur Aufnahmen aus dem Reisezeitraum. Jedes Foto bekommt einen
+Reisetag und den nächstgelegenen Ort zugeordnet; Aufnahmen ohne Koordinaten
+erscheinen im Zeitstrahl mit dem geplanten Tagesort, aber nicht auf der Karte.
+
+Geschrieben werden verkleinerte WebP-Fassungen nach `photos/gross/` und
+`photos/klein/` — **ohne Metadaten**, die Originale bleiben unangetastet.
+
+Nützliche Schalter:
+
+| Schalter | Wirkung |
+|---|---|
+| `--dry-run` | nur auswerten, nichts schreiben |
+| `--round 3` | Koordinaten auf rund 100 m runden |
+| `--web-dir` | Pfad, unter dem die Bilder auf der Website liegen |
+| `--base-url` | Präfix für die URLs, etwa eine CDN-Adresse |
+| `--max-edge` | längste Kante der großen Fassung (Vorgabe 1600) |
+
+**Vor dem Veröffentlichen bedenken:** Das Repository ist öffentlich. Bilder und
+Koordinaten, die hier landen, sind für jeden abrufbar — und bleiben über die
+Git-Historie erhalten, auch wenn sie später gelöscht werden. Wer das nicht
+möchte, legt die Bilder auf einen eigenen Speicher (etwa Cloudflare R2) und
+setzt `--base-url` auf dessen Adresse; dann enthält das Repository nur
+`photos.json`.
+
 ## Offline & Installation (PWA)
 
 Die Seite ist installierbar und funktioniert offline. `sw.js` legt beim ersten
@@ -74,6 +116,7 @@ Kartenausschnitte, die noch nie geladen wurden.
 ├── css/style.css      Gesamtes Styling (dunkelgrün/slate, mobile-first)
 └── js/
     ├── main.js         Navigation, Countdown, Service-Worker-Registrierung
+    ├── photos.js       Fotoseite: Zeitstrahl, Karte, Großansicht
     ├── map.js          Leaflet-Karte: Marker, Popups, Routen-Polylines
     └── sightseeing.js  Inhalte & Detail-Popups der Sehenswürdigkeiten
 ```

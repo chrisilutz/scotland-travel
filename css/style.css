@@ -335,6 +335,210 @@ img { max-width: 100%; display: block; }
   font-size: 0.9rem;
 }
 
+/* ============ Fotoseite ============ */
+
+.photo-empty {
+  max-width: 44rem;
+  padding: 1.6rem 1.8rem;
+  background: #fff;
+  border: 1px solid rgba(13, 31, 24, 0.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.photo-empty h2 { font-size: 1.3rem; margin-bottom: 0.6rem; }
+.photo-empty p { color: var(--slate-500); font-size: 0.95rem; margin-bottom: 0.8rem; }
+.photo-empty pre {
+  background: var(--green-950);
+  color: var(--cream);
+  padding: 0.9rem 1.1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  margin-bottom: 0.9rem;
+}
+.photo-empty code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.photo-empty p code {
+  background: rgba(13, 31, 24, 0.07);
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  font-size: 0.88em;
+}
+
+.photo-tabs { display: flex; gap: 0.4rem; margin-bottom: 2rem; }
+.photo-tabs button {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--slate-700);
+  background: var(--paper);
+  border: 1px solid rgba(13, 31, 24, 0.12);
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.photo-tabs button:hover { border-color: var(--green-500); color: var(--green-800); }
+.photo-tabs button.active {
+  color: var(--cream);
+  background: var(--green-700);
+  border-color: var(--green-700);
+}
+.photo-tabs button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.photo-day { margin-bottom: 2.75rem; }
+.photo-day h2 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 1.3rem;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid rgba(13, 31, 24, 0.1);
+}
+.photo-day-date { color: var(--gold); font-family: var(--font-body); font-size: 0.8rem;
+  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.photo-day-count {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.6rem;
+}
+
+.photo-thumb {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cream-dim);
+  cursor: pointer;
+  aspect-ratio: 4 / 3;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-thumb:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.photo-thumb:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.photo-noloc {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  font-size: 0.7rem;
+  color: var(--cream);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+#photo-map {
+  height: min(70vh, 640px);
+  min-height: 380px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(13, 31, 24, 0.12);
+  box-shadow: var(--shadow-lg);
+  z-index: 0;
+}
+#photo-map[hidden] { display: none; }
+.photo-hint { padding: 2rem; color: var(--slate-500); text-align: center; }
+
+.photo-pin {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--cream);
+  box-shadow: 0 2px 8px rgba(13, 31, 24, 0.45);
+  background: var(--green-800);
+}
+.photo-pin img { width: 100%; height: 100%; object-fit: cover; }
+.photo-pin span {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  min-width: 19px;
+  padding: 0 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 19px;
+  text-align: center;
+  color: var(--green-950);
+  background: var(--gold);
+  border-radius: 999px;
+}
+
+.photo-popup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  gap: 4px;
+  margin-top: 0.6rem;
+}
+.photo-popup-grid .photo-thumb { aspect-ratio: 1; border-radius: 5px; }
+
+/* Großansicht */
+.photo-modal {
+  width: min(1100px, calc(100% - 1.5rem));
+  max-height: 92vh;
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: var(--green-950);
+  color: var(--cream);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.photo-modal::backdrop { background: rgba(6, 15, 11, 0.86); backdrop-filter: blur(3px); }
+.photo-modal img {
+  display: block;
+  width: 100%;
+  max-height: calc(92vh - 4.5rem);
+  object-fit: contain;
+  background: #000;
+}
+.photo-modal-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.9rem;
+  padding: 0.85rem 1.2rem;
+  font-size: 0.88rem;
+  color: var(--slate-300);
+}
+.photo-modal-caption strong { color: var(--cream); font-size: 0.95rem; }
+.photo-modal-pos { margin-left: auto; }
+
+.photo-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 64px;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--cream);
+  background: rgba(13, 31, 24, 0.55);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.photo-nav:hover { background: rgba(13, 31, 24, 0.8); }
+.photo-nav:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.photo-prev { left: 0; border-radius: 0 8px 8px 0; }
+.photo-next { right: 0; border-radius: 8px 0 0 8px; }
+
+@media (max-width: 640px) {
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .photo-nav { width: 38px; height: 54px; font-size: 1.5rem; }
+}
+
 /* ============ Wetterkarte (Startseite) ============ */
 
 .weather-card {
