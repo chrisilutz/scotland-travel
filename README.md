@@ -61,6 +61,10 @@ pip install Pillow
 python3 tools/import-photos.py ~/Downloads/Takeout
 ```
 
+Liegen die Aufnahmen als HEIC vor (iPhone), zusätzlich `pip install pillow-heif`.
+Ohne dieses Paket meldet das Skript, wie viele Dateien es deshalb übersprungen
+hat, statt sie stillschweigend zu ignorieren.
+
 Das Skript liest Aufnahmezeit und Koordinaten — bevorzugt aus den JSON-Dateien,
 die Google neben jedes Bild legt, ersatzweise aus dem EXIF im Bild selbst.
 Google kennt dabei mehrere Namensschemata für die Sidecar-Dateien
@@ -84,6 +88,23 @@ Nützliche Schalter:
 | `--web-dir` | Pfad, unter dem die Bilder auf der Website liegen |
 | `--base-url` | Präfix für die URLs, etwa eine CDN-Adresse |
 | `--max-edge` | längste Kante der großen Fassung (Vorgabe 1600) |
+
+### Takeout oder Album-Download?
+
+Das Skript kommt auch ohne die JSON-Dateien aus — etwa wenn die Bilder direkt
+aus einem Album heruntergeladen wurden — und liest die Angaben dann aus dem
+EXIF. Takeout ist aber die verlässlichere Quelle:
+
+- Orte, die Google nur aus dem **Standortverlauf** kannte, stehen ausschließlich
+  in der JSON. Beim Album-Download fehlen sie; die betroffenen Fotos landen im
+  Zeitstrahl, nicht auf der Karte.
+- In Google Fotos **korrigierte Aufnahmedaten** stehen ebenfalls nur in der JSON.
+- EXIF-Zeiten tragen **keine Zeitzone**. Das Skript nimmt die Reisezone an
+  (BST, UTC+1); stand die Kamerauhr auf einer anderen Zone, verschieben sich die
+  Zeiten entsprechend. Takeout liefert stattdessen einen echten UTC-Zeitstempel.
+
+Welche Variante wie viel liefert, zeigt ein Vergleich der Zeile
+„ohne Koordinaten" aus zwei `--dry-run`-Läufen.
 
 **Vor dem Veröffentlichen bedenken:** Das Repository ist öffentlich. Bilder und
 Koordinaten, die hier landen, sind für jeden abrufbar — und bleiben über die

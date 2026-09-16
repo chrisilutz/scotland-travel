@@ -16,6 +16,13 @@ Was das Skript tut:
 6. erzeugt photos.json, das die Website einliest
 
 Voraussetzung: Pillow  (pip install Pillow)
+Für HEIC/HEIF zusätzlich: pip install pillow-heif
+
+Ohne die JSON-Dateien — etwa beim direkten Download eines Albums statt eines
+Takeout-Exports — greift das Skript auf das EXIF im Bild zurück. Dann fehlen
+allerdings Orte, die Google nur aus dem Standortverlauf kannte, und EXIF-Zeiten
+tragen keine Zeitzone (hier wird die Reisezone angenommen). Takeout ist deshalb
+die verlässlichere Quelle.
 
 Die Logik zum Auslesen und Zuordnen steckt in Funktionen ohne Pillow-Bezug,
 damit sie sich ohne installierte Bildbibliothek testen lässt.
@@ -67,6 +74,18 @@ PLACES = [
 TRIP_TZ = timezone(timedelta(hours=1))
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
+
+# iPhone-Aufnahmen liegen oft als HEIC vor. Pillow kann das nur mit dem
+# Zusatzpaket pillow-heif lesen — ist es da, wird die Endung mitgenommen.
+HEIF_SUFFIXES = {".heic", ".heif"}
+HEIF_READY = False
+try:
+    import pillow_heif                     # noqa: F401
+    pillow_heif.register_heif_opener()
+    IMAGE_SUFFIXES |= HEIF_SUFFIXES
+    HEIF_READY = True
+except Exception:
+    pass
 
 
 # --------------------------------------------------------------------------
@@ -278,12 +297,18 @@ def make_derivative(src, dest, max_edge, quality):
 
 def collect(takeout_dir, start, end, round_to, verbose=True):
     """Alle passenden Fotos einsammeln. Gibt (eintraege, statistik)."""
-    stats = {"gefunden": 0, "ohne_zeit": 0, "ausserhalb": 0, "ohne_ort": 0, "uebernommen": 0}
+    stats = {"gefunden": 0, "ohne_zeit": 0, "ausserhalb": 0, "ohne_ort": 0,
+             "uebernommen": 0, "heic_uebersprungen": 0, "andere_uebersprungen": 0}
     entries = []
 
     for root, _dirs, files in os.walk(takeout_dir):
         for name in sorted(files):
-            if os.path.splitext(name)[1].lower() not in IMAGE_SUFFIXES:
+            suffix = os.path.splitext(name)[1].lower()
+            if suffix not in IMAGE_SUFFIXES:
+                if suffix in HEIF_SUFFIXES:
+                    stats["heic_uebersprungen"] += 1
+                elif suffix and suffix != ".json":
+                    stats["andere_uebersprungen"] += 1
                 continue
             path = os.path.join(root, name)
             stats["gefunden"] += 1
@@ -348,6 +373,13 @@ def main():
     print(f"  außerhalb der Reise  : {stats['ausserhalb']}")
     print(f"  ohne Koordinaten     : {stats['ohne_ort']} (erscheinen nur im Zeitstrahl)")
     print(f"  übernommen           : {stats['uebernommen']}")
+
+    if stats["heic_uebersprungen"]:
+        print(f"\n  ACHTUNG: {stats['heic_uebersprungen']} HEIC/HEIF-Dateien übersprungen.")
+        print("  Zum Einlesen:  pip install pillow-heif")
+    if stats["andere_uebersprungen"]:
+        print(f"  {stats['andere_uebersprungen']} Dateien mit unbekannter Endung übersprungen "
+              "(Videos o. Ä.).")
 
     if not entries:
         sys.exit("Keine passenden Fotos gefunden.")
