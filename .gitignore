@@ -1,0 +1,6 @@
+# Python-Zwischendateien des Importskripts
+__pycache__/
+*.pyc
+
+# Lokale Arbeitskopien des Takeout-Exports
+Takeout/
