@@ -1,0 +1,40 @@
+# mise.toml — Werkzeuge, Umgebung und Aufgaben für dieses Projekt
+#
+#   mise tasks                              alle Aufgaben anzeigen
+#   mise run setup                          Umgebung einrichten
+#   mise run fotos ~/Downloads/Takeout      Fotos importieren
+#   mise run serve                          Seite lokal ansehen
+#
+# Der Ordner .venv wird beim Betreten automatisch angelegt und aktiviert —
+# ein manuelles „source .venv/bin/activate" entfällt damit.
+
+# Ohne Angabe nutzt mise das Python des Systems. Soll stattdessen eine feste
+# Fassung verwendet werden, die Zeile einkommentieren — mise lädt sie dann
+# beim ersten Lauf herunter, was einige Minuten dauern kann.
+# [tools]
+# python = "3.12"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+
+[tasks.setup]
+description = "Virtuelle Umgebung anlegen und Abhängigkeiten installieren"
+run = "pip install --upgrade pip && pip install -r tools/requirements.txt"
+# Nur erneut ausführen, wenn sich die Abhängigkeiten geändert haben
+sources = ["tools/requirements.txt"]
+outputs = [".venv/pyvenv.cfg"]
+
+[tasks.fotos]
+description = "Fotos aus einem Takeout-Export importieren (Pfad als Argument)"
+depends = ["setup"]
+run = "python3 tools/import-photos.py"
+
+[tasks."fotos:pruefen"]
+description = "Import nur auswerten, nichts schreiben"
+depends = ["setup"]
+run = "python3 tools/import-photos.py --dry-run"
+
+[tasks.serve]
+description = "Seite lokal unter http://localhost:8000 ansehen"
+run = "python3 -m http.server 8000"

@@ -56,6 +56,18 @@ bleibt die Position rein lokal.
 Die Fotoseite liest `photos.json`. Diese Datei erzeugt `tools/import-photos.py`
 aus einem entpackten Google-Takeout-Export:
 
+**Mit [mise](https://mise.jdx.dev):** `mise.toml` liegt bei, die Umgebung wird
+beim Betreten des Ordners angelegt und aktiviert.
+
+```bash
+mise run setup                              # einmalig
+mise run fotos ~/Downloads/Takeout
+mise run "fotos:pruefen" ~/Downloads/Takeout   # nur auswerten
+mise tasks                                  # alle Aufgaben anzeigen
+```
+
+**Ohne mise:**
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
