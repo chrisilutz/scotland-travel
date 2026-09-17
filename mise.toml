@@ -20,10 +20,17 @@ _.python.venv = { path = ".venv", create = true }
 
 [tasks.setup]
 description = "Virtuelle Umgebung anlegen und Abhängigkeiten installieren"
-run = "pip install --upgrade pip && pip install -r tools/requirements.txt"
-# Nur erneut ausführen, wenn sich die Abhängigkeiten geändert haben
+run = """
+pip install --upgrade pip
+pip install -r tools/requirements.txt
+cp tools/requirements.txt .venv/.installiert
+"""
+# Nur erneut ausführen, wenn sich die Abhängigkeiten geändert haben.
+# Die Marke schreibt die Aufgabe selbst — .venv/pyvenv.cfg taugt dafür nicht,
+# weil [env] den Ordner schon beim Betreten anlegt. Die Aufgabe hielte sich
+# dann für erledigt, obwohl noch kein einziges Paket installiert wäre.
 sources = ["tools/requirements.txt"]
-outputs = [".venv/pyvenv.cfg"]
+outputs = [".venv/.installiert"]
 
 [tasks.fotos]
 description = "Fotos aus einem Takeout-Export importieren (Pfad als Argument)"
