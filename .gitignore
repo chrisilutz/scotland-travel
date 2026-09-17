@@ -8,3 +8,6 @@ venv/
 
 # Lokale Arbeitskopien des Takeout-Exports
 Takeout/
+
+# Bildableitungen: liegen auf R2, nicht im Repository (git add -f photos erzwingt es)
+photos/

@@ -144,6 +144,72 @@ EXIF. Takeout ist aber die verlässlichere Quelle:
 Welche Variante wie viel liefert, zeigt ein Vergleich der Zeile
 „ohne Koordinaten" aus zwei `--dry-run`-Läufen.
 
+### Bilder auf Cloudflare R2 ablegen
+
+Sinnvoll, sobald es mehr als ein paar Aufnahmen sind: Das Repository bleibt
+klein, die Bilder liegen hinter dem Cloudflare-CDN, und im öffentlichen Git
+landet nur `photos.json`.
+
+**1. API-Token erzeugen.** Dashboard → R2 → *Manage R2 API Tokens* → *Create
+API Token*, Berechtigung *Object Read & Write*, eingeschränkt auf den Bucket.
+Notiert werden *Access Key ID*, *Secret Access Key* und die Endpunkt-Adresse
+`https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+
+**2. rclone einrichten.** R2 spricht das S3-Protokoll; `wrangler` lädt nur
+einzelne Objekte, für ein paar hundert Bilder ist rclone das richtige Werkzeug.
+
+```bash
+brew install rclone
+```
+
+In `~/.config/rclone/rclone.conf`:
+
+```ini
+[r2]
+type = s3
+provider = Cloudflare
+access_key_id = …
+secret_access_key = …
+endpoint = https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+region = auto
+no_check_bucket = true
+```
+
+`no_check_bucket` verhindert, dass rclone den Bucket anzulegen versucht — ein
+auf Objekte eingeschränktes Token darf das nicht.
+
+**3. Hochladen.** Der Zielpfad muss `photos/` heißen, darauf verweist
+`photos.json`:
+
+```bash
+rclone copy photos r2:schottland/photos --progress --transfers 16
+```
+
+Der Aufruf ist wiederholbar: bereits vorhandene, gleich große Dateien
+überspringt rclone. Den Content-Type (`image/webp`) setzt er aus der Endung.
+
+**4. Bucket öffentlich machen.** Bucket → *Settings* → *Public access*. Die
+`r2.dev`-Adresse ist bequem, aber von Cloudflare gedrosselt und nicht für den
+Dauerbetrieb gedacht. Besser eine eigene *Custom Domain*, etwa
+`fotos.deine-domain.tld` — die läuft über das CDN und ist nicht limitiert.
+
+**5. Import mit der Adresse laufen lassen:**
+
+```bash
+mise run fotos -- ~/Downloads/schottland --base-url https://fotos.deine-domain.tld
+```
+
+Das doppelte `--` trennt die Argumente des Skripts von denen von mise. Der
+Schrägstrich am Ende der Adresse ist egal, das Skript ergänzt ihn.
+
+Geschrieben wird weiterhin nach `photos/` — das ist die Quelle für den
+rclone-Upload. In `photos.json` stehen dann aber die R2-Adressen. `photos/`
+steht deshalb in `.gitignore`; sollen die Bilder doch einmal aus dem Repository
+kommen, genügt `git add -f photos`.
+
+Der Service Worker erkennt die ausgelagerten Bilder am Pfad `/photos/gross/…`
+bzw. `/photos/klein/…` und legt sie genauso offline ab wie zuvor.
+
 **Vor dem Veröffentlichen bedenken:** Das Repository ist öffentlich. Bilder und
 Koordinaten, die hier landen, sind für jeden abrufbar — und bleiben über die
 Git-Historie erhalten, auch wenn sie später gelöscht werden. Wer das nicht

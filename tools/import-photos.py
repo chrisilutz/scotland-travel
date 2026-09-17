@@ -421,6 +421,11 @@ def main():
         if not os.path.isdir(folder):
             sys.exit(f"Ordner nicht gefunden: {folder}")
 
+    # --base-url wird direkt vor den Pfad gesetzt. Ohne Schrägstrich am Ende
+    # ergäbe „https://fotos.example.org" + „photos/…" eine kaputte Adresse.
+    if args.base_url and not args.base_url.endswith("/"):
+        args.base_url += "/"
+
     for folder in args.takeout:
         print(f"Durchsuche {folder} …")
     entries, stats = collect(args.takeout, args.start, args.end, args.round)

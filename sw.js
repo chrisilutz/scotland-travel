@@ -16,7 +16,7 @@
    wird beim Aktivieren entfernt.
 */
 
-var VERSION = "v6";
+var VERSION = "v7";
 var SHELL = "schottland-shell-" + VERSION;
 var RUNTIME = "schottland-runtime-" + VERSION;
 var TILES = "schottland-tiles-" + VERSION;
@@ -31,6 +31,10 @@ var MAX_TILES = 400;
 var MAX_IMAGES = 60;
 var MAX_THUMBS = 400;      /* Vorschaubilder sind klein */
 var MAX_FULL = 60;         /* Großansichten nur begrenzt */
+
+/* Reisefotos, so wie tools/import-photos.py sie benennt — eigene Herkunft
+   ebenso wie ein externer Speicher via --base-url */
+var PHOTO_PATH = /\/photos\/(gross|klein)\/[^/]+\.webp$/;
 
 var SHELL_FILES = [
   "./",
@@ -163,8 +167,11 @@ self.addEventListener("fetch", function (event) {
 
   /* Reisefotos: gedeckelt zwischenspeichern, damit der Speicher nicht
      mit hunderten Aufnahmen vollläuft. Vorschauen großzügiger als die
-     Großansichten. */
-  if (sameOrigin && url.pathname.indexOf("/photos/") !== -1) {
+     Großansichten. Auch fremde Herkunft — mit --base-url liegen die Bilder
+     auf einem eigenen Speicher (etwa Cloudflare R2), sollen aber genauso
+     offline verfügbar sein. Das Muster ist eng genug, dass nichts Fremdes
+     mitgefangen wird. */
+  if (PHOTO_PATH.test(url.pathname)) {
     var limit = url.pathname.indexOf("/klein/") !== -1 ? MAX_THUMBS : MAX_FULL;
     event.respondWith(cacheFirst(request, PHOTOS, limit));
     return;
