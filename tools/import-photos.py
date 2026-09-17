@@ -296,6 +296,24 @@ def file_hash(path, chunk=1 << 20):
 # Bilder verkleinern  (braucht Pillow)
 # --------------------------------------------------------------------------
 
+def require_pillow():
+    """Vor dem ersten Schreiben prüfen, ob Pillow da ist — nicht erst mittendrin."""
+    try:
+        import PIL  # noqa: F401
+    except ImportError:
+        sys.exit(
+            "Pillow fehlt — ohne die Bibliothek lassen sich keine Bilder verkleinern.\n"
+            "\n"
+            "  mit mise:   mise run setup\n"
+            "  sonst:      pip install -r tools/requirements.txt\n"
+            "\n"
+            "Läuft das Skript mit dem System-Python statt dem der virtuellen\n"
+            "Umgebung, hilft der direkte Aufruf:  .venv/bin/python tools/import-photos.py …\n"
+            "\n"
+            "Nur auswerten geht auch ohne Pillow:  --dry-run"
+        )
+
+
 def make_derivative(src, dest, max_edge, quality):
     """Verkleinerte Kopie ohne Metadaten schreiben. Gibt (breite, hoehe)."""
     from PIL import Image, ImageOps
@@ -430,8 +448,13 @@ def main():
         print("\n--dry-run: keine Dateien geschrieben.")
         return
 
+    require_pillow()
+
     photos = []
-    for index, entry in enumerate(entries, start=1):
+    defekt = []
+    index = 0
+    for entry in entries:
+        index += 1
         name = f"{index:04d}.webp"
         # Wohin geschrieben wird …
         large_path = os.path.join(args.out, "gross", name)
@@ -441,8 +464,14 @@ def main():
         large_url = f"{web_dir}/gross/{name}"
         thumb_url = f"{web_dir}/klein/{name}"
 
-        width, height = make_derivative(entry["source"], large_path, args.max_edge, args.quality)
-        make_derivative(entry["source"], thumb_path, args.thumb_edge, args.quality)
+        try:
+            width, height = make_derivative(entry["source"], large_path, args.max_edge, args.quality)
+            make_derivative(entry["source"], thumb_path, args.thumb_edge, args.quality)
+        except Exception as fehler:
+            # Eine unlesbare Datei soll nicht den ganzen Lauf kosten
+            defekt.append((entry["source"], fehler))
+            index -= 1
+            continue
 
         photos.append({
             "id": f"{index:04d}",
@@ -458,6 +487,16 @@ def main():
         })
         if index % 25 == 0:
             print(f"  … {index} von {len(entries)} verkleinert")
+
+    if defekt:
+        print(f"\n  {len(defekt)} Datei(en) liessen sich nicht öffnen und fehlen:")
+        for pfad, fehler in defekt[:10]:
+            print(f"    {pfad} — {fehler}")
+        if len(defekt) > 10:
+            print(f"    … und {len(defekt) - 10} weitere")
+
+    if not photos:
+        sys.exit("Keine Datei konnte verkleinert werden — nichts geschrieben.")
 
     days = []
     for date, label, _pos in TRIP_DAYS:
