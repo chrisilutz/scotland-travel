@@ -33,9 +33,12 @@ jobs:
         # Workflows und Deploy-Configs nicht mit veröffentlicht werden.
         run: |
           mkdir -p _site
-          cp index.html agenda.html map.html sightseeing.html essen.html links.html _site/
+          cp index.html agenda.html map.html fotos.html sightseeing.html essen.html links.html _site/
           cp sw.js manifest.webmanifest _site/
           cp -r css js icons _site/
+          # Fotos sind optional — erst vorhanden, wenn tools/import-photos.py lief
+          [ -f photos.json ] && cp photos.json _site/ || true
+          [ -d photos ] && cp -r photos _site/ || true
 
       - name: Pages konfigurieren
         uses: actions/configure-pages@v5

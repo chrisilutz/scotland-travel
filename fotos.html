@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fotos · Schottland 2026</title>
+  <meta name="description" content="Fotos der Schottland-Reise 2026 — als Zeitstrahl nach Reisetagen und auf der Karte nach Aufnahmeort.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0d1f18">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Schottland 26">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏴󠁧󠁢󠁳󠁣󠁴󠁿</text></svg>">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="index.html">Schottland <span class="thistle">2026</span></a>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Start</a></li>
+        <li><a href="agenda.html">Agenda</a></li>
+        <li><a href="map.html">Karte</a></li>
+        <li><a href="fotos.html" class="active">Fotos</a></li>
+        <li><a href="sightseeing.html">Sightseeing</a></li>
+        <li><a href="essen.html">Essen</a></li>
+        <li><a href="links.html">Links</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <span class="kicker">Rückblick</span>
+      <h1>Fotos</h1>
+      <p id="photo-count">Aufnahmen der Reise, nach Tagen sortiert und nach
+         Aufnahmeort auf der Karte.</p>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+
+      <!-- Solange photos.json fehlt -->
+      <div class="photo-empty" id="photo-status">
+        <h2>Noch keine Fotos importiert</h2>
+        <p>Die Seite liest <code>photos.json</code>. Diese Datei entsteht aus einem
+           entpackten Google-Takeout-Export:</p>
+        <pre><code>pip install Pillow
+python3 tools/import-photos.py ~/Downloads/Takeout</code></pre>
+        <p>Das Skript liest Aufnahmezeit und Koordinaten aus den Metadaten, ordnet
+           jedes Foto einem Reisetag zu, legt verkleinerte Fassungen unter
+           <code>photos/</code> ab und schreibt <code>photos.json</code>. Die
+           Ableitungen enthalten keine EXIF-Daten mehr, die Originale bleiben
+           unangetastet. Mit <code>--dry-run</code> lässt sich vorab prüfen, was
+           gefunden würde, mit <code>--round 3</code> werden die Koordinaten auf
+           rund 100&nbsp;Meter gerundet.</p>
+      </div>
+
+      <div id="photos" hidden>
+        <div class="photo-tabs" role="tablist">
+          <button type="button" class="active" data-view="timeline" role="tab" aria-selected="true">Zeitstrahl</button>
+          <button type="button" data-view="map" role="tab" aria-selected="false">Karte</button>
+        </div>
+
+        <div id="photo-timeline"></div>
+        <div id="photo-map" hidden></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Großansicht -->
+  <dialog id="photo-modal" class="photo-modal" aria-label="Foto in groß">
+    <button type="button" class="modal-close" aria-label="Schließen">&times;</button>
+    <button type="button" class="photo-nav photo-prev" aria-label="Vorheriges Foto">‹</button>
+    <button type="button" class="photo-nav photo-next" aria-label="Nächstes Foto">›</button>
+    <img id="photo-modal-img" alt="">
+    <p class="photo-modal-caption" id="photo-modal-caption"></p>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">Schottland 2026</span>
+      <span>04.–14. September · Christian &amp; Vera</span>
+      <a href="agenda.html">Zur Agenda</a>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="js/main.js"></script>
+  <script src="js/photos.js"></script>
+</body>
+</html>

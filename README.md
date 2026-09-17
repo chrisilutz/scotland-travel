@@ -12,6 +12,7 @@ mit dem Zug von Würzburg über Brüssel und London nach Aberdeen, Inverness und
 | `map.html` | `/map` | Interaktive Leaflet-Karte mit allen Stationen und der Route |
 | `sightseeing.html` | `/sightseeing` | Sehenswürdigkeiten und Aktivitäten je Station |
 | `essen.html` | `/essen` | Afternoon Tea und Dinner je Station, mit vegetarischer Kennzeichnung |
+| `fotos.html` | `/fotos` | Reisefotos als Zeitstrahl und auf der Karte |
 | `links.html` | `/links` | Alle Buchungsreferenzen und externen Links |
 
 ## Technik
@@ -50,6 +51,172 @@ auf zwei Nachkommastellen gerundet (rund 1 km) — die genaue Position verlässt
 das Gerät nicht. Auf der Karte gibt es dafür den Knopf ◎ oben links; dort
 bleibt die Position rein lokal.
 
+## Fotos
+
+Die Fotoseite liest `photos.json`. Diese Datei erzeugt `tools/import-photos.py`
+aus einem entpackten Google-Takeout-Export:
+
+**Mit [mise](https://mise.jdx.dev):** `mise.toml` liegt bei, die Umgebung wird
+beim Betreten des Ordners angelegt und aktiviert.
+
+```bash
+mise run setup                              # einmalig
+mise run fotos ~/Downloads/Takeout
+mise run "fotos:pruefen" ~/Downloads/Takeout   # nur auswerten
+mise tasks                                  # alle Aufgaben anzeigen
+```
+
+**Ohne mise:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r tools/requirements.txt
+python3 tools/import-photos.py ~/Downloads/Takeout
+deactivate                         # wenn fertig
+```
+
+Die virtuelle Umgebung hält die Pakete im Projekt statt systemweit. Auf
+aktuellen Linux-Systemen und bei Homebrew-Python ist das ohnehin Pflicht — ein
+`pip install` ohne Umgebung bricht dort mit `externally-managed-environment` ab.
+Der Ordner `.venv/` ist rund 75 MB groß und steht in `.gitignore`; er gehört
+nicht ins Repository und lässt sich jederzeit neu anlegen.
+
+Ohne `activate` geht es auch direkt: `.venv/bin/python tools/import-photos.py …`
+
+`pillow-heif` ist nur für HEIC-Aufnahmen von iPhones nötig. Fehlt es, meldet das
+Skript, wie viele Dateien es deshalb übersprungen hat, statt sie stillschweigend
+zu ignorieren.
+
+Das Skript liest Aufnahmezeit und Koordinaten — bevorzugt aus den JSON-Dateien,
+die Google neben jedes Bild legt, ersatzweise aus dem EXIF im Bild selbst.
+Google kennt dabei mehrere Namensschemata für die Sidecar-Dateien
+(`.json`, `.supplemental-metadata.json`, gekürzte Varianten, `(1)`-Dopplungen);
+alle werden erkannt. Koordinaten `0/0` bedeuten „Ort unbekannt" und werden
+verworfen.
+
+Behalten werden nur Aufnahmen aus dem Reisezeitraum. Jedes Foto bekommt einen
+Reisetag und den nächstgelegenen Ort zugeordnet; Aufnahmen ohne Koordinaten
+erscheinen im Zeitstrahl mit dem geplanten Tagesort, aber nicht auf der Karte.
+
+Geschrieben werden verkleinerte WebP-Fassungen nach `photos/gross/` und
+`photos/klein/` — **ohne Metadaten**, die Originale bleiben unangetastet.
+
+Nützliche Schalter:
+
+| Schalter | Wirkung |
+|---|---|
+| `--dry-run` | nur auswerten, nichts schreiben |
+| `--round 3` | Koordinaten auf rund 100 m runden |
+| `--web-dir` | Pfad, unter dem die Bilder auf der Website liegen |
+| `--base-url` | Präfix für die URLs, etwa eine CDN-Adresse |
+| `--max-edge` | längste Kante der großen Fassung (Vorgabe 1600) |
+
+### Fotos mehrerer Personen
+
+Das Skript nimmt mehrere Quellordner entgegen — etwa je einen Takeout-Export
+pro Person:
+
+```bash
+python3 tools/import-photos.py ~/Takeout-Christian ~/Takeout-Vera
+```
+
+Inhaltsgleiche Dateien werden über eine Prüfsumme erkannt und nur einmal
+übernommen. Das greift, wenn dasselbe Foto aus einem geteilten Album in beide
+Bibliotheken gespeichert wurde. Zwei Handys, die dasselbe Motiv fotografiert
+haben, ergeben dagegen verschiedene Dateien und bleiben zu Recht beide
+erhalten. Die Fotos aller Quellen werden nach Aufnahmezeit ineinander sortiert.
+
+### Takeout oder Album-Download?
+
+Das Skript kommt auch ohne die JSON-Dateien aus — etwa wenn die Bilder direkt
+aus einem Album heruntergeladen wurden — und liest die Angaben dann aus dem
+EXIF. Takeout ist aber die verlässlichere Quelle:
+
+- Orte, die Google nur aus dem **Standortverlauf** kannte, stehen ausschließlich
+  in der JSON. Beim Album-Download fehlen sie; die betroffenen Fotos landen im
+  Zeitstrahl, nicht auf der Karte.
+- In Google Fotos **korrigierte Aufnahmedaten** stehen ebenfalls nur in der JSON.
+- EXIF-Zeiten tragen **keine Zeitzone**. Das Skript nimmt die Reisezone an
+  (BST, UTC+1); stand die Kamerauhr auf einer anderen Zone, verschieben sich die
+  Zeiten entsprechend. Takeout liefert stattdessen einen echten UTC-Zeitstempel.
+
+Welche Variante wie viel liefert, zeigt ein Vergleich der Zeile
+„ohne Koordinaten" aus zwei `--dry-run`-Läufen.
+
+### Bilder auf Cloudflare R2 ablegen
+
+Sinnvoll, sobald es mehr als ein paar Aufnahmen sind: Das Repository bleibt
+klein, die Bilder liegen hinter dem Cloudflare-CDN, und im öffentlichen Git
+landet nur `photos.json`.
+
+**1. API-Token erzeugen.** Dashboard → R2 → *Manage R2 API Tokens* → *Create
+API Token*, Berechtigung *Object Read & Write*, eingeschränkt auf den Bucket.
+Notiert werden *Access Key ID*, *Secret Access Key* und die Endpunkt-Adresse
+`https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+
+**2. rclone einrichten.** R2 spricht das S3-Protokoll; `wrangler` lädt nur
+einzelne Objekte, für ein paar hundert Bilder ist rclone das richtige Werkzeug.
+
+```bash
+brew install rclone
+```
+
+In `~/.config/rclone/rclone.conf`:
+
+```ini
+[r2]
+type = s3
+provider = Cloudflare
+access_key_id = …
+secret_access_key = …
+endpoint = https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+region = auto
+no_check_bucket = true
+```
+
+`no_check_bucket` verhindert, dass rclone den Bucket anzulegen versucht — ein
+auf Objekte eingeschränktes Token darf das nicht.
+
+**3. Hochladen.** Der Zielpfad muss `photos/` heißen, darauf verweist
+`photos.json`:
+
+```bash
+rclone copy photos r2:schottland/photos --progress --transfers 16
+```
+
+Der Aufruf ist wiederholbar: bereits vorhandene, gleich große Dateien
+überspringt rclone. Den Content-Type (`image/webp`) setzt er aus der Endung.
+
+**4. Bucket öffentlich machen.** Bucket → *Settings* → *Public access*. Die
+`r2.dev`-Adresse ist bequem, aber von Cloudflare gedrosselt und nicht für den
+Dauerbetrieb gedacht. Besser eine eigene *Custom Domain*, etwa
+`fotos.deine-domain.tld` — die läuft über das CDN und ist nicht limitiert.
+
+**5. Import mit der Adresse laufen lassen:**
+
+```bash
+mise run fotos -- ~/Downloads/schottland --base-url https://fotos.deine-domain.tld
+```
+
+Das doppelte `--` trennt die Argumente des Skripts von denen von mise. Der
+Schrägstrich am Ende der Adresse ist egal, das Skript ergänzt ihn.
+
+Geschrieben wird weiterhin nach `photos/` — das ist die Quelle für den
+rclone-Upload. In `photos.json` stehen dann aber die R2-Adressen. `photos/`
+steht deshalb in `.gitignore`; sollen die Bilder doch einmal aus dem Repository
+kommen, genügt `git add -f photos`.
+
+Der Service Worker erkennt die ausgelagerten Bilder am Pfad `/photos/gross/…`
+bzw. `/photos/klein/…` und legt sie genauso offline ab wie zuvor.
+
+**Vor dem Veröffentlichen bedenken:** Das Repository ist öffentlich. Bilder und
+Koordinaten, die hier landen, sind für jeden abrufbar — und bleiben über die
+Git-Historie erhalten, auch wenn sie später gelöscht werden. Wer das nicht
+möchte, legt die Bilder auf einen eigenen Speicher (etwa Cloudflare R2) und
+setzt `--base-url` auf dessen Adresse; dann enthält das Repository nur
+`photos.json`.
+
 ## Offline & Installation (PWA)
 
 Die Seite ist installierbar und funktioniert offline. `sw.js` legt beim ersten
@@ -74,6 +241,7 @@ Kartenausschnitte, die noch nie geladen wurden.
 ├── css/style.css      Gesamtes Styling (dunkelgrün/slate, mobile-first)
 └── js/
     ├── main.js         Navigation, Countdown, Service-Worker-Registrierung
+    ├── photos.js       Fotoseite: Zeitstrahl, Karte, Großansicht
     ├── map.js          Leaflet-Karte: Marker, Popups, Routen-Polylines
     └── sightseeing.js  Inhalte & Detail-Popups der Sehenswürdigkeiten
 ```

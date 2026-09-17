@@ -1,0 +1,13 @@
+# Python-Zwischendateien des Importskripts
+__pycache__/
+*.pyc
+
+# Virtuelle Umgebung — enthaelt nur installierte Pakete, gehoert nicht ins Repo
+.venv/
+venv/
+
+# Lokale Arbeitskopien des Takeout-Exports
+Takeout/
+
+# Bildableitungen: liegen auf R2, nicht im Repository (git add -f photos erzwingt es)
+photos/

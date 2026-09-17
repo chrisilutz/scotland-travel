@@ -4,7 +4,9 @@ pages:
   image: alpine:latest
   script:
     - mkdir -p public
-    - cp -r index.html agenda.html map.html sightseeing.html essen.html links.html sw.js manifest.webmanifest css js icons public/
+    - cp -r index.html agenda.html map.html fotos.html sightseeing.html essen.html links.html sw.js manifest.webmanifest css js icons public/
+    - '[ -f photos.json ] && cp photos.json public/ || true'
+    - '[ -d photos ] && cp -r photos public/ || true'
   artifacts:
     paths:
       - public

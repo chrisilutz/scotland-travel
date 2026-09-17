@@ -16,24 +16,32 @@
    wird beim Aktivieren entfernt.
 */
 
-var VERSION = "v5";
+var VERSION = "v7";
 var SHELL = "schottland-shell-" + VERSION;
 var RUNTIME = "schottland-runtime-" + VERSION;
 var TILES = "schottland-tiles-" + VERSION;
 var IMAGES = "schottland-images-" + VERSION;
 var WEATHER = "schottland-weather-" + VERSION;
+var PHOTOS = "schottland-fotos-" + VERSION;
 
-var CURRENT = [SHELL, RUNTIME, TILES, IMAGES, WEATHER];
+var CURRENT = [SHELL, RUNTIME, TILES, IMAGES, WEATHER, PHOTOS];
 
 /* Obergrenzen, damit der Speicher nicht unbegrenzt wächst */
 var MAX_TILES = 400;
 var MAX_IMAGES = 60;
+var MAX_THUMBS = 400;      /* Vorschaubilder sind klein */
+var MAX_FULL = 60;         /* Großansichten nur begrenzt */
+
+/* Reisefotos, so wie tools/import-photos.py sie benennt — eigene Herkunft
+   ebenso wie ein externer Speicher via --base-url */
+var PHOTO_PATH = /\/photos\/(gross|klein)\/[^/]+\.webp$/;
 
 var SHELL_FILES = [
   "./",
   "index.html",
   "agenda.html",
   "map.html",
+  "fotos.html",
   "sightseeing.html",
   "essen.html",
   "links.html",
@@ -41,6 +49,7 @@ var SHELL_FILES = [
   "js/main.js",
   "js/map.js",
   "js/sightseeing.js",
+  "js/photos.js",
   "js/weather.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
@@ -153,6 +162,18 @@ self.addEventListener("fetch", function (event) {
   /* Seitenaufrufe */
   if (request.mode === "navigate") {
     event.respondWith(networkFirst(request));
+    return;
+  }
+
+  /* Reisefotos: gedeckelt zwischenspeichern, damit der Speicher nicht
+     mit hunderten Aufnahmen vollläuft. Vorschauen großzügiger als die
+     Großansichten. Auch fremde Herkunft — mit --base-url liegen die Bilder
+     auf einem eigenen Speicher (etwa Cloudflare R2), sollen aber genauso
+     offline verfügbar sein. Das Muster ist eng genug, dass nichts Fremdes
+     mitgefangen wird. */
+  if (PHOTO_PATH.test(url.pathname)) {
+    var limit = url.pathname.indexOf("/klein/") !== -1 ? MAX_THUMBS : MAX_FULL;
+    event.respondWith(cacheFirst(request, PHOTOS, limit));
     return;
   }
 
