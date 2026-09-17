@@ -1,0 +1,8 @@
+# Abhängigkeiten von import-photos.py
+#
+#   python3 -m venv .venv
+#   source .venv/bin/activate          # Windows: .venv\Scripts\activate
+#   pip install -r tools/requirements.txt
+
+Pillow>=10          # Bilder lesen, drehen, verkleinern; EXIF auslesen
+pillow-heif>=0.16   # optional: HEIC/HEIF von iPhones lesbar machen

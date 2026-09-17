@@ -57,13 +57,24 @@ Die Fotoseite liest `photos.json`. Diese Datei erzeugt `tools/import-photos.py`
 aus einem entpackten Google-Takeout-Export:
 
 ```bash
-pip install Pillow
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r tools/requirements.txt
 python3 tools/import-photos.py ~/Downloads/Takeout
+deactivate                         # wenn fertig
 ```
 
-Liegen die Aufnahmen als HEIC vor (iPhone), zusätzlich `pip install pillow-heif`.
-Ohne dieses Paket meldet das Skript, wie viele Dateien es deshalb übersprungen
-hat, statt sie stillschweigend zu ignorieren.
+Die virtuelle Umgebung hält die Pakete im Projekt statt systemweit. Auf
+aktuellen Linux-Systemen und bei Homebrew-Python ist das ohnehin Pflicht — ein
+`pip install` ohne Umgebung bricht dort mit `externally-managed-environment` ab.
+Der Ordner `.venv/` ist rund 75 MB groß und steht in `.gitignore`; er gehört
+nicht ins Repository und lässt sich jederzeit neu anlegen.
+
+Ohne `activate` geht es auch direkt: `.venv/bin/python tools/import-photos.py …`
+
+`pillow-heif` ist nur für HEIC-Aufnahmen von iPhones nötig. Fehlt es, meldet das
+Skript, wie viele Dateien es deshalb übersprungen hat, statt sie stillschweigend
+zu ignorieren.
 
 Das Skript liest Aufnahmezeit und Koordinaten — bevorzugt aus den JSON-Dateien,
 die Google neben jedes Bild legt, ersatzweise aus dem EXIF im Bild selbst.

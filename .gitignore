@@ -2,5 +2,9 @@
 __pycache__/
 *.pyc
 
+# Virtuelle Umgebung — enthaelt nur installierte Pakete, gehoert nicht ins Repo
+.venv/
+venv/
+
 # Lokale Arbeitskopien des Takeout-Exports
 Takeout/
